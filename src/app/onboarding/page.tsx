@@ -12,7 +12,6 @@ import { crearClienteNavegador } from "@/lib/supabase/client";
  */
 export default function PaginaOnboarding() {
   const router = useRouter();
-  const supabase = crearClienteNavegador();
   const [paso, setPaso] = useState(1);
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,6 +31,7 @@ export default function PaginaOnboarding() {
   // Si ya pertenece a una familia, directo a la app.
   useEffect(() => {
     (async () => {
+      const supabase = crearClienteNavegador();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
       const { data } = await supabase
@@ -45,6 +45,7 @@ export default function PaginaOnboarding() {
     e.preventDefault();
     setCargando(true);
     setError(null);
+    const supabase = crearClienteNavegador();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     const { data: familia, error: e1 } = await supabase
@@ -66,6 +67,7 @@ export default function PaginaOnboarding() {
   const guardarHijos = async (e: React.FormEvent) => {
     e.preventDefault();
     setCargando(true);
+    const supabase = crearClienteNavegador();
     const validos = hijos.filter((h) => h.nombre.trim());
     if (validos.length && familiaId) {
       await supabase.from("hijos").insert(
@@ -84,6 +86,7 @@ export default function PaginaOnboarding() {
     e.preventDefault();
     if (!familiaId) return;
     setCargando(true);
+    const supabase = crearClienteNavegador();
     const { data: { user } } = await supabase.auth.getUser();
     const { data: inv } = await supabase
       .from("invitaciones")
