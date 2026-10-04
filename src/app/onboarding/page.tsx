@@ -131,7 +131,7 @@ export default function PaginaOnboarding() {
 
   return (
     <main className="min-h-screen bg-crema-100 px-4 py-10 flex flex-col items-center">
-      <Logo />
+      <Logo tamano="lg" />
       <div className="w-full max-w-lg mt-8">
         {/* Indicador de pasos */}
         <div className="flex items-center gap-2 mb-6">

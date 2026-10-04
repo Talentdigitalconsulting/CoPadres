@@ -40,6 +40,7 @@ const config: Config = {
       },
       fontFamily: {
         display: ["Fraunces", "Georgia", "serif"],
+        marca: ["Fredoka", "Nunito", "system-ui", "sans-serif"],
         sans: ["Inter", "system-ui", "sans-serif"],
       },
       boxShadow: {

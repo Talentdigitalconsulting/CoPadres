@@ -14,7 +14,7 @@ export default function MarcoAuth({
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-10 bg-crema-100">
       <Link href="/" className="mb-8">
-        <Logo />
+        <Logo tamano="lg" />
       </Link>
       <div className="w-full max-w-md tarjeta p-7 md:p-9">
         <h1 className="font-display text-2xl text-carbon mb-1">{titulo}</h1>
