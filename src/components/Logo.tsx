@@ -5,15 +5,28 @@ import Image from "next/image";
  * un corazón) + nombre con la tipografía de la marca: «Co» en turquesa con la
  * sonrisa debajo y «Padres» en azul marino (o blanco sobre fondos oscuros).
  */
-export default function Logo({ claro = false, tamano = "md" }: { claro?: boolean; tamano?: "md" | "lg" }) {
+export default function Logo({
+  claro = false,
+  tamano = "md",
+  adaptable = false,
+}: {
+  claro?: boolean;
+  tamano?: "md" | "lg";
+  /** Más pequeño en móviles estrechos (cabecera pública). */
+  adaptable?: boolean;
+}) {
   const alto = tamano === "lg" ? 44 : 34;
   return (
-    <span className="inline-flex items-center gap-2 select-none" aria-label="CoPadres">
+    <span className={`inline-flex items-center select-none ${adaptable ? "gap-1.5 sm:gap-2" : "gap-2"}`} aria-label="CoPadres">
       <span className={`shrink-0 inline-flex ${claro ? "bg-white rounded-xl p-1" : ""}`}>
         <Image src="/marca/copadres-icono.png" alt="" width={alto} height={alto} priority
-          style={{ width: claro ? alto - 8 : alto, height: "auto" }} />
+          className={adaptable ? "w-[28px] sm:w-[34px] h-auto" : undefined}
+          style={adaptable ? undefined : { width: claro ? alto - 8 : alto, height: "auto" }} />
       </span>
-      <Nombre claro={claro} className={tamano === "lg" ? "text-3xl" : "text-[1.6rem]"} />
+      <Nombre
+        claro={claro}
+        className={tamano === "lg" ? "text-3xl" : adaptable ? "text-[1.3rem] sm:text-[1.6rem]" : "text-[1.6rem]"}
+      />
     </span>
   );
 }

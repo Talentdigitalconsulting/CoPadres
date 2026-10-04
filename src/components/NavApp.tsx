@@ -55,11 +55,8 @@ export default function NavApp() {
   // Cerrar el menú al cambiar de página.
   useEffect(() => setMenuAbierto(false), [ruta]);
 
-  // Registrar el service worker (PWA) y contar notificaciones en tiempo real.
+  // Contar notificaciones en tiempo real. (El service worker se registra en app/layout.tsx.)
   useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {});
-    }
     const supabase = crearClienteNavegador();
     let canal: ReturnType<typeof supabase.channel> | null = null;
 

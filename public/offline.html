@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Sin conexión · CoPadres</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; min-height: 100dvh; display: flex; align-items: center; justify-content: center;
+    background: #faf6ee; color: #26251f; text-align: center;
+    font-family: Inter, system-ui, -apple-system, sans-serif; padding: 24px;
+  }
+  .caja { max-width: 320px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  img { width: 120px; height: auto; }
+  h1 { font-size: 22px; font-weight: 600; margin: 0; line-height: 1.25; }
+  p { font-size: 15px; line-height: 1.5; color: #4a4940; margin: 0; }
+  a.boton {
+    display: inline-flex; align-items: center; min-height: 50px; padding: 0 24px; border-radius: 999px;
+    background: #445937; color: #fdfbf7; font-weight: 600; text-decoration: none;
+  }
+  @media (prefers-color-scheme: dark) {
+    body { background: #182013; color: #f3ecdc; }
+    p { color: #cedac1; }
+    a.boton { background: #8ca876; color: #182013; }
+  }
+</style>
+</head>
+<body>
+  <div class="caja">
+    <img src="/marca/copadres-logo.png" alt="CoPadres">
+    <h1>Sin conexión</h1>
+    <p>No hay internet ahora mismo. Nada de lo que hayas registrado se pierde: en cuanto vuelva la conexión, seguimos donde lo dejaste.</p>
+    <!-- Enlace vacío = recargar la página actual. Sin JavaScript, compatible con la CSP. -->
+    <a class="boton" href="">Reintentar</a>
+  </div>
+</body>
+</html>

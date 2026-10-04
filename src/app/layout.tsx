@@ -52,7 +52,18 @@ export const viewport: Viewport = {
   themeColor: "#0b2559",
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
 };
+
+/**
+ * App instalable (PWA): se guarda el aviso de instalación en cuanto el navegador
+ * lo ofrece (puede llegar antes de que React cargue) para que el botón
+ * «Descargar versión móvil» instale con un toque, y se registra el service worker.
+ */
+const SCRIPT_PWA = `window.__copadresPrompt=null;
+window.addEventListener("beforeinstallprompt",function(e){e.preventDefault();window.__copadresPrompt=e;window.dispatchEvent(new Event("copadres:instalable"));});
+window.addEventListener("appinstalled",function(){window.__copadresPrompt=null;});
+if("serviceWorker" in navigator&&window.isSecureContext){window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){});});}`;
 
 const ORGANIZACION = {
   "@context": "https://schema.org",
@@ -100,6 +111,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           nonce={nonce}
         />
         <link rel="alternate" type="text/plain" href="/llms.txt" title="Resumen para modelos de IA" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: SCRIPT_PWA }} />
       </head>
       <body>
         <JsonLd datos={ORGANIZACION} />

@@ -261,3 +261,29 @@ Las instalaciones nuevas no lo necesitan: `schema.sql` ya incluye ambas.
 ### 4. Después de publicar
 - Da de alta la web en **Google Search Console** y **Bing Webmaster Tools** y envía `https://TU-DOMINIO/sitemap.xml`.
 - Comprueba las cabeceras en https://securityheaders.com
+
+---
+
+## App móvil (Android y iPhone)
+
+CoPadres se instala en el móvil directamente desde la web, sin pasar por Google Play ni App Store
+(es una app web instalable o «PWA»). En la cabecera pública hay un botón **Descargar versión móvil**
+(en móviles estrechos aparece como **App**):
+
+- **Android** (Chrome, Edge, Samsung Internet…): al pulsarlo sale el aviso del sistema
+  «Instalar CoPadres» y queda instalada con su icono en un toque. Si el navegador no ofrece el aviso,
+  se muestran los pasos del menú del navegador.
+- **iPhone / iPad**: Apple no deja instalar apps web con un botón. Se muestran los tres pasos de
+  Safari: *Compartir → Añadir a pantalla de inicio → Añadir*. Si la web está abierta dentro de
+  Instagram, WhatsApp, etc., indica cómo abrirla en Safari.
+- **Ordenador**: muestra un código QR para abrir la web en el móvil (y permite instalarla también en
+  el ordenador si el navegador lo admite).
+
+Ficheros implicados: `src/components/publico/DescargarApp.tsx` (botón y ventana),
+`src/app/manifest.ts` (nombre, iconos y accesos directos), `public/sw.js` (service worker; nunca guarda
+datos personales ni respuestas de Supabase), `public/offline.html` (pantalla «Sin conexión») y
+`public/icons/` (iconos de la app).
+
+Para publicarla además en las tiendas: Google Play admite esta misma app empaquetada como TWA
+(herramienta *Bubblewrap*, cuenta de desarrollador de 25 $); App Store exige envolverla con
+*Capacitor* y una cuenta de Apple Developer (99 $/año).
