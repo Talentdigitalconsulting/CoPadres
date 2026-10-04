@@ -12,8 +12,8 @@ export default function PaginaQuienesSomos() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12 md:py-16">
       <h1 className="font-display text-4xl md:text-5xl leading-tight">Quiénes somos</h1>
-      <div className="mt-8 bg-white rounded-tarjeta border border-carbon-linea/60 p-6 inline-block">
-        <Image src="/marca/talent-digital-consulting.png" alt="Talent & Digital Consulting" width={320} height={97} className="h-16 w-auto" />
+      <div className="mt-8 bg-carbon rounded-tarjeta p-6 inline-block">
+        <Image src="/marca/talent-digital-consulting-claro.png" alt="Talent & Digital Consulting" width={397} height={122} className="h-16 w-auto" />
       </div>
       <div className="mt-8 space-y-4 text-[16px] leading-relaxed text-carbon-claro">
         <p>

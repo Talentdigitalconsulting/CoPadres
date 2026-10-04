@@ -62,9 +62,9 @@ export default function PiePublico() {
       </div>
       <div className="border-t border-white/10">
         <div className="max-w-6xl mx-auto px-4 py-8 flex flex-col md:flex-row items-center gap-6 md:justify-between">
-          <a href="/quienes-somos" className="bg-crema-50 rounded-2xl px-5 py-3 shrink-0" aria-label="Talent & Digital Consulting">
-            <Image src="/marca/talent-digital-consulting.png" alt="Talent & Digital Consulting" width={224} height={68}
-              className="h-12 w-auto" />
+          <a href="/quienes-somos" className="shrink-0" aria-label="Talent & Digital Consulting">
+            <Image src="/marca/talent-digital-consulting-claro.png" alt="Talent & Digital Consulting" width={397} height={122}
+              className="h-14 w-auto" />
           </a>
           <div className="text-xs text-crema-300/80 leading-relaxed text-center md:text-right">
             <p>
@@ -72,10 +72,6 @@ export default function PiePublico() {
             </p>
             <p>
               © {ANIO_COPYRIGHT} {TITULAR.nombreComercial}. Todos los derechos reservados.
-            </p>
-            <p>
-              Titular: {TITULAR.nombre} · NIF {TITULAR.nif} · {TITULAR.localidad} ({TITULAR.provincia}) ·{" "}
-              <a href={`mailto:${TITULAR.email}`} className="underline hover:text-white">{TITULAR.email}</a>
             </p>
           </div>
         </div>
