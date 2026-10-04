@@ -361,7 +361,7 @@ function Hijos() {
   return (
     <div className="space-y-6">
       {aviso && (
-        <div className="fixed top-16 md:top-6 right-4 z-[60] bg-salvia-800 text-crema-50 text-sm rounded-xl px-4 py-2.5 shadow-flotante">
+        <div className="fixed top-16 md:top-6 right-4 z-60 bg-salvia-800 text-crema-50 text-sm rounded-xl px-4 py-2.5 shadow-flotante">
           {aviso}
         </div>
       )}

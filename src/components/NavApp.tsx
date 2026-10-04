@@ -8,6 +8,7 @@ import {
   IconoInformes, IconoAsistente, IconoCampana, IconoAjustes, IconoSalir, IconoHijos, IconoMenu,
 } from "@/components/Iconos";
 import { crearClienteNavegador } from "@/lib/supabase/client";
+import { contarPendientes } from "@/lib/offline/sinConexion";
 
 const ENLACES = [
   { href: "/app", texto: "Inicio", Icono: IconoInicio },
@@ -86,6 +87,15 @@ export default function NavApp() {
   }, []);
 
   const salir = async () => {
+    const pendientes = await contarPendientes().catch(() => 0);
+    if (
+      pendientes > 0 &&
+      !window.confirm(
+        `Tienes ${pendientes === 1 ? "1 cambio" : `${pendientes} cambios`} sin subir (hechos sin conexión). ` +
+          "Se quedan cifrados en este dispositivo y se subirán cuando vuelvas a entrar con tu cuenta y haya internet. ¿Cerrar sesión igualmente?"
+      )
+    )
+      return;
     await crearClienteNavegador().auth.signOut();
     router.push("/");
     router.refresh();

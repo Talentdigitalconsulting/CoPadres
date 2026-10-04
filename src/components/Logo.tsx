@@ -36,9 +36,9 @@ export function Nombre({ claro = false, className = "" }: { claro?: boolean; cla
   return (
     <span className={`font-marca font-semibold leading-none tracking-tight inline-flex items-baseline ${className}`} aria-hidden>
       <span className="relative inline-block">
-        <span className={claro ? "text-[#3fd0c5]" : "bg-gradient-to-b from-[#16b8b0] to-[#0a8f9c] bg-clip-text text-transparent"}>Co</span>
+        <span className={claro ? "text-[#3fd0c5]" : "bg-linear-to-b from-[#16b8b0] to-[#0a8f9c] bg-clip-text text-transparent"}>Co</span>
         {/* La sonrisa del logotipo bajo «Co» */}
-        <svg viewBox="0 0 40 10" className="absolute left-[8%] -bottom-[0.32em] w-[84%]" aria-hidden>
+        <svg viewBox="0 0 40 10" className="absolute left-[8%] bottom-[-0.32em] w-[84%]" aria-hidden>
           <path d="M3 3 Q20 12 37 3" fill="none" stroke={claro ? "#3fd0c5" : "#0ea5a3"} strokeWidth="3.2" strokeLinecap="round" />
         </svg>
       </span>

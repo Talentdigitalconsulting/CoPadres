@@ -72,7 +72,7 @@ export default function PaginaPrecios() {
       <div className="grid md:grid-cols-2 gap-5 max-w-2xl mx-auto">
         {PLANES.map((plan) => (
           <div key={plan.id}
-            className={`tarjeta p-7 flex flex-col ${plan.destacado ? "border-salvia-600 border-2 relative md:order-none order-first" : ""}`}>
+            className={`tarjeta p-7 flex flex-col ${plan.destacado ? "border-salvia-600 border-2 relative md:order-0 order-first" : ""}`}>
             {plan.destacado && (
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 chip bg-salvia-700 text-crema-50">El más elegido</span>
             )}

@@ -23,7 +23,7 @@ export default function PaginaContacto() {
         "@context": "https://schema.org", "@type": "ContactPage", url: `${urlSitio()}/contacto`,
         mainEntity: { "@id": `${urlSitio()}/#organizacion` },
       }} />
-      <h1 className="font-display text-4xl md:text-5xl leading-tight">Contacto</h1>
+      <h1 className="font-display text-4xl md:text-5xl leading-tight md:leading-[1.08]">Contacto</h1>
       <p className="text-lg text-carbon-claro mt-4 leading-relaxed">
         Escríbenos a <a className="text-salvia-700 underline" href={`mailto:${TITULAR.email}`}>{TITULAR.email}</a>. Te responderemos
         lo antes posible. Elige el motivo para que tu correo llegue mejor clasificado:

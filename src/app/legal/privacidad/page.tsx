@@ -137,6 +137,12 @@ export default function PaginaPrivacidad() {
         <li>Contraseñas robustas y comprobación de contraseñas filtradas sin que la contraseña salga de tu dispositivo.</li>
         <li>Mensajes y registro de auditoría inalterables, límites contra ataques de fuerza bruta y cierre de sesión por inactividad.</li>
         <li>Comprobantes en almacenamiento privado, accesibles solo con enlaces temporales.</li>
+        <li>
+          Modo sin conexión: si usas la app sin internet, lo que registres y la última copia de los datos que has consultado se
+          guardan en tu dispositivo cifrados con AES-256 (con una clave que no puede extraerse del navegador). Lo pendiente se sube
+          automáticamente a nuestros servidores al recuperar la conexión, solo con tu sesión. Al cerrar sesión se borran las copias
+          de consulta; los cambios aún no subidos se conservan cifrados hasta que vuelvas a entrar.
+        </li>
       </ul>
       <p>
         Si se produjera una brecha de seguridad que afecte a tus datos, la notificaremos a la AEPD en un máximo de 72 horas y te

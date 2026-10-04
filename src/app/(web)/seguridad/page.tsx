@@ -16,6 +16,7 @@ const MEDIDAS = [
   { t: "Invitaciones blindadas", d: "Solo se puede entrar en un espacio con una invitación personal, de un solo uso, que caduca a los 7 días y está ligada al email invitado." },
   { t: "Registro inalterable", d: "Mensajes, solicitudes, consentimientos y auditoría no pueden modificarse ni borrarse. Los gastos solo cambian de estado por transiciones permitidas." },
   { t: "Protección frente a ataques", d: "Política de seguridad de contenidos (CSP) con nonce contra inyección de scripts, protección anti-clickjacking, límites de peticiones contra fuerza bruta y abuso, y comprobación de origen en las operaciones sensibles." },
+  { t: "Sin conexión, sin perder nada", d: "Sin internet puedes seguir registrando: los cambios se guardan cifrados con AES-256 en tu dispositivo y se suben solos a tu cuenta al volver la conexión. Nunca se guardan contraseñas ni tokens." },
   { t: "Sesiones bajo control", d: "Cierre automático tras una hora sin actividad y botón para cerrar la sesión en todos tus dispositivos." },
   { t: "Mínimo de datos y de terceros", d: "Sin publicidad, sin analítica de seguimiento y sin vender datos. Los pagos los gestiona Stripe: nunca vemos tu tarjeta." },
 ];
@@ -24,7 +25,7 @@ export default function PaginaSeguridad() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 md:py-16">
       <p className="chip bg-salvia-100 text-salvia-800 mb-4">Seguridad</p>
-      <h1 className="font-display text-4xl md:text-5xl leading-tight max-w-3xl">Tus datos y los de tus hijos, protegidos en cada capa</h1>
+      <h1 className="font-display text-4xl md:text-5xl leading-tight md:leading-[1.08] max-w-3xl">Tus datos y los de tus hijos, protegidos en cada capa</h1>
       <p className="text-lg text-carbon-claro mt-5 max-w-2xl leading-relaxed">
         CoPadres guarda información sensible. Por eso la seguridad no es una función más: está en el diseño de la base de datos,
         de la aplicación y de cada pantalla.

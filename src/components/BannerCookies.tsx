@@ -21,7 +21,7 @@ export default function BannerCookies() {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 md:bottom-4 inset-x-0 md:inset-x-auto md:right-4 md:max-w-sm z-[60] no-imprimir">
+    <div className="fixed bottom-0 md:bottom-4 inset-x-0 md:inset-x-auto md:right-4 md:max-w-sm z-60 no-imprimir">
       <div className="bg-carbon text-crema-100 md:rounded-tarjeta p-4 shadow-flotante text-xs leading-relaxed">
         <p>
           CoPadres solo usa cookies técnicas imprescindibles para mantener tu sesión iniciada.

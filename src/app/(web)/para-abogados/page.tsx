@@ -25,7 +25,7 @@ export default function PaginaAbogados() {
         about: "Herramienta de coparentalidad recomendada por profesionales del derecho de familia",
       }} />
       <p className="chip bg-arcilla/15 text-arcilla mb-4">Para profesionales</p>
-      <h1 className="font-display text-4xl md:text-5xl leading-tight max-w-3xl">
+      <h1 className="font-display text-4xl md:text-5xl leading-tight md:leading-[1.08] max-w-3xl">
         Una herramienta para que tus clientes cumplan el convenio con menos conflicto
       </h1>
       <p className="text-lg text-carbon-claro mt-5 max-w-2xl leading-relaxed">

@@ -24,7 +24,7 @@ export default function PaginaGuias() {
       }} />
       <header className="max-w-2xl">
         <p className="chip bg-salvia-100 text-salvia-800 mb-4">Guías</p>
-        <h1 className="font-display text-4xl md:text-5xl leading-tight">Guías para padres y madres separados</h1>
+        <h1 className="font-display text-4xl md:text-5xl leading-tight md:leading-[1.08]">Guías para padres y madres separados</h1>
         <p className="text-carbon-suave mt-4 text-lg leading-relaxed">
           Información práctica y clara para organizar la custodia, los gastos y la comunicación. Contenido orientativo: para tu
           caso concreto, consulta siempre con un abogado de familia o un mediador.

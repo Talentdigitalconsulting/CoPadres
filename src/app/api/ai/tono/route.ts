@@ -15,7 +15,7 @@ const Entrada = z.object({ texto: z.string().min(1).max(2000) });
 export async function POST(peticion: Request) {
   if (!origenPermitido(peticion)) return NextResponse.json({ error: "Origen no permitido" }, { status: 403 });
   // Solo usuarios autenticados.
-  const supabase = crearClienteServidor();
+  const supabase = await crearClienteServidor();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   if (!(await dentroDelLimite(supabase, "tono", 120, 3600))) return respuestaLimite();

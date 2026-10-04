@@ -57,7 +57,7 @@ export default function ArticuloContenido({
         </ol>
       </nav>
 
-      <h1 className="font-display text-3xl md:text-5xl leading-tight text-carbon">{pagina.titulo}</h1>
+      <h1 className="font-display text-3xl md:text-5xl leading-tight md:leading-[1.08] text-carbon">{pagina.titulo}</h1>
       {meta && <div className="mt-3 text-sm text-carbon-suave">{meta}</div>}
       <p className="mt-5 text-lg text-carbon-claro leading-relaxed">{pagina.entradilla}</p>
 

@@ -140,7 +140,7 @@ export default function DescargarApp({ className = "" }: { className?: string })
           role="dialog"
           aria-modal="true"
           aria-labelledby="titulo-instalar"
-          className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center"
+          className="fixed inset-0 z-70 flex items-end justify-center sm:items-center"
         >
           <button
             type="button"

@@ -1,13 +1,15 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
 export const alt = "CoPadres — Coordinaos por vuestros hijos, sin discutir";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 /** Imagen para compartir en redes y mensajería (Open Graph). */
 export default async function ImagenOG() {
-  const icono = await fetch(new URL("../../public/marca/copadres-logo.png", import.meta.url)).then((r) => r.arrayBuffer());
+  const png = await readFile(join(process.cwd(), "public/marca/copadres-logo.png"));
+  const icono = `data:image/png;base64,${png.toString("base64")}`;
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", justifyContent: "space-between",
@@ -15,7 +17,7 @@ export default async function ImagenOG() {
         <div style={{ display: "flex" }}>
           {/* Logotipo completo: icono + nombre con la tipografía de la marca */}
           {/* eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text */}
-          <img src={icono as unknown as string} width={248} height={185} />
+          <img src={icono} width={248} height={185} />
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
           <div style={{ fontSize: 60, lineHeight: 1.1, fontWeight: 700, maxWidth: 1000 }}>

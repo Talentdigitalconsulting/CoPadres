@@ -7,8 +7,8 @@ import { TITULAR, urlSitio } from "@/lib/legal";
 // Se renderiza en cada petición para aplicar la CSP con nonce.
 export const dynamic = "force-dynamic";
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const g = guiaPorSlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const g = guiaPorSlug((await params).slug);
   if (!g) return {};
   const ruta = `/guias/${g.slug}`;
   return {
@@ -19,8 +19,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function PaginaGuia({ params }: { params: { slug: string } }) {
-  const g = guiaPorSlug(params.slug);
+export default async function PaginaGuia({ params }: { params: Promise<{ slug: string }> }) {
+  const g = guiaPorSlug((await params).slug);
   if (!g) notFound();
   const url = urlSitio();
   const relacionadas = (g.relacionadas ?? [])

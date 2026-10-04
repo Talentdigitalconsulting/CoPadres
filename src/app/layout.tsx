@@ -96,9 +96,9 @@ const ORGANIZACION = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Leer el nonce hace que cada página se genere con su propia CSP segura.
-  const nonce = headers().get("x-nonce") ?? undefined;
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html lang="es">
       <head>

@@ -1,55 +1,120 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-  color-scheme: light;
+@theme {
+  --color-salvia-50: #f4f6f1;
+  --color-salvia-100: #e6ecdf;
+  --color-salvia-200: #cedac1;
+  --color-salvia-300: #aec29b;
+  --color-salvia-400: #8ca876;
+  --color-salvia-500: #6e8d58;
+  --color-salvia-600: #557043;
+  --color-salvia-700: #445937;
+  --color-salvia-800: #38482f;
+  --color-salvia-900: #303d29;
+  --color-salvia-950: #182013;
+
+  --color-crema-50: #fdfbf7;
+  --color-crema-100: #faf6ee;
+  --color-crema-200: #f3ecdc;
+  --color-crema-300: #e9dfc6;
+  --color-crema-400: #dccca6;
+
+  --color-carbon: #26251f;
+  --color-carbon-claro: #4a4940;
+  --color-carbon-suave: #6f6e63;
+  --color-carbon-linea: #e4e0d3;
+
+  --color-arcilla: #c1794f;
+  --color-vino: #a05446;
+
+  --font-display: Fredoka, Nunito, system-ui, sans-serif;
+  --font-marca: Fredoka, Nunito, system-ui, sans-serif;
+  --font-sans: Inter, system-ui, sans-serif;
+
+  --shadow-tarjeta:
+    0 1px 2px rgba(38, 37, 31, 0.05), 0 4px 16px rgba(38, 37, 31, 0.06);
+  --shadow-flotante: 0 8px 32px rgba(38, 37, 31, 0.14);
+
+  --radius-tarjeta: 1.1rem;
 }
 
-body {
-  @apply bg-crema-100 text-carbon antialiased;
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
 }
 
-/* ---------- Componentes reutilizables ---------- */
-@layer components {
+@utility font-display {
   /* Títulos: Fredoka en peso medio (el nombre del logotipo usa 600) */
-  .font-display {
-    font-weight: 500;
-    letter-spacing: -0.01em;
-  }
-  .tarjeta {
-    @apply bg-white rounded-tarjeta shadow-tarjeta border border-carbon-linea/60 p-5;
-  }
-  .boton {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold
-      transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-salvia-500
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+@utility tarjeta {
+  @apply bg-white rounded-tarjeta shadow-tarjeta border border-carbon-linea/60 p-5;
+}
+
+@utility boton {
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold
+      transition-colors focus:outline-hidden focus-visible:ring-2 focus-visible:ring-salvia-500
       disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+@utility boton-primario {
+  @apply boton bg-salvia-700 text-crema-50 hover:bg-salvia-800;
+}
+
+@utility boton-secundario {
+  @apply boton bg-white text-carbon border border-carbon-linea hover:bg-crema-100;
+}
+
+@utility boton-suave {
+  @apply boton bg-salvia-100 text-salvia-800 hover:bg-salvia-200;
+}
+
+@utility boton-peligro {
+  @apply boton bg-vino text-crema-50 hover:opacity-90;
+}
+
+@utility campo {
+  @apply w-full rounded-xl border border-carbon-linea bg-white px-4 py-2.5 text-sm text-carbon
+      placeholder:text-carbon-suave/60 focus:outline-hidden focus:ring-2 focus:ring-salvia-400 focus:border-salvia-400;
+}
+
+@utility etiqueta {
+  @apply block text-xs font-semibold uppercase tracking-wide text-carbon-suave mb-1.5;
+}
+
+@utility chip {
+  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
+}
+
+@utility titulo-seccion {
+  @apply font-display text-2xl md:text-3xl text-carbon;
+}
+
+@layer utilities {
+  :root {
+    color-scheme: light;
   }
-  .boton-primario {
-    @apply boton bg-salvia-700 text-crema-50 hover:bg-salvia-800;
+
+  body {
+    @apply bg-crema-100 text-carbon antialiased;
   }
-  .boton-secundario {
-    @apply boton bg-white text-carbon border border-carbon-linea hover:bg-crema-100;
-  }
-  .boton-suave {
-    @apply boton bg-salvia-100 text-salvia-800 hover:bg-salvia-200;
-  }
-  .boton-peligro {
-    @apply boton bg-vino text-crema-50 hover:opacity-90;
-  }
-  .campo {
-    @apply w-full rounded-xl border border-carbon-linea bg-white px-4 py-2.5 text-sm text-carbon
-      placeholder:text-carbon-suave/60 focus:outline-none focus:ring-2 focus:ring-salvia-400 focus:border-salvia-400;
-  }
-  .etiqueta {
-    @apply block text-xs font-semibold uppercase tracking-wide text-carbon-suave mb-1.5;
-  }
-  .chip {
-    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium;
-  }
-  .titulo-seccion {
-    @apply font-display text-2xl md:text-3xl text-carbon;
-  }
+
+  /* ---------- Componentes reutilizables ---------- */
 }
 
 /* Estilos de impresión para los informes en PDF (Guardar como PDF) */

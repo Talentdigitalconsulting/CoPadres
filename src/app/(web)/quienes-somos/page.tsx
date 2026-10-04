@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function PaginaQuienesSomos() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-12 md:py-16">
-      <h1 className="font-display text-4xl md:text-5xl leading-tight">Quiénes somos</h1>
+      <h1 className="font-display text-4xl md:text-5xl leading-tight md:leading-[1.08]">Quiénes somos</h1>
       <div className="mt-8 bg-carbon rounded-tarjeta p-6 inline-block">
         <Image src="/marca/talent-digital-consulting-claro.png" alt="Talent & Digital Consulting" width={397} height={122} className="h-16 w-auto" />
       </div>

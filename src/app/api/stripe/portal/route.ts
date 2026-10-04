@@ -7,7 +7,7 @@ import { origenPermitido } from "@/lib/seguridad";
 /** Abre el portal de cliente de Stripe (facturas, cambiar tarjeta, cancelar). */
 export async function POST(peticion: Request) {
   if (!origenPermitido(peticion)) return NextResponse.json({ error: "Origen no permitido" }, { status: 403 });
-  const supabase = crearClienteServidor();
+  const supabase = await crearClienteServidor();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   if (!(await dentroDelLimite(supabase, "portal", 20, 3600))) return respuestaLimite();

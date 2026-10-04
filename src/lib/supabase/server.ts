@@ -4,8 +4,8 @@ import { cookies } from "next/headers";
 type ListaCookies = { name: string; value: string; options?: CookieOptions }[];
 
 /** Cliente de Supabase para Server Components y Route Handlers. */
-export function crearClienteServidor() {
-  const almacen = cookies();
+export async function crearClienteServidor() {
+  const almacen = await cookies();
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,

@@ -4,7 +4,7 @@ import { dentroDelLimite, respuestaLimite } from "@/lib/limites";
 
 /** RGPD — Derecho de portabilidad: exporta los datos del usuario en JSON. */
 export async function GET() {
-  const supabase = crearClienteServidor();
+  const supabase = await crearClienteServidor();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
   if (!(await dentroDelLimite(supabase, "exportar", 5, 3600))) return respuestaLimite();

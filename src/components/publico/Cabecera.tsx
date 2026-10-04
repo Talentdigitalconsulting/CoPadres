@@ -16,7 +16,7 @@ const ENLACES = [
 export default function CabeceraPublica() {
   const [abierto, setAbierto] = useState(false);
   return (
-    <header className="bg-crema-100/90 backdrop-blur sticky top-0 z-40 border-b border-carbon-linea/50">
+    <header className="bg-crema-100/90 backdrop-blur-sm sticky top-0 z-40 border-b border-carbon-linea/50">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2 sm:gap-4">
         <Link href="/" aria-label="CoPadres, inicio" className="shrink-0"><Logo adaptable /></Link>
         <nav className="hidden lg:flex items-center gap-6 text-sm" aria-label="Principal">

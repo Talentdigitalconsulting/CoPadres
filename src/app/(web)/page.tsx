@@ -110,7 +110,7 @@ export default function PaginaInicio() {
       {/* ---------- Héroe ---------- */}
       <section className="max-w-5xl mx-auto px-4 pt-14 pb-20 text-center">
         <p className="chip bg-salvia-100 text-salvia-800 mb-5">Para padres y madres separados</p>
-        <h1 className="font-display text-4xl md:text-6xl leading-tight max-w-3xl mx-auto">
+        <h1 className="font-display text-4xl md:text-6xl leading-tight md:leading-[1.08] max-w-3xl mx-auto">
           Coordinaos por vuestros hijos, <em className="text-salvia-700 not-italic">sin discutir</em>
         </h1>
         <p className="text-carbon-suave mt-5 max-w-xl mx-auto md:text-lg">
@@ -223,7 +223,7 @@ export default function PaginaInicio() {
 
       {/* ---------- Llamada final ---------- */}
       <section className="bg-salvia-700 text-crema-50 py-16 text-center px-4">
-        <h2 className="font-display text-3xl md:text-4xl max-w-xl mx-auto leading-snug">
+        <h2 className="font-display text-3xl md:text-4xl max-w-xl mx-auto leading-snug md:leading-[1.15]">
           Lo mejor para vuestros hijos es que estéis coordinados
         </h2>
         <Link href="/registro" className="boton bg-crema-50 text-salvia-800 hover:bg-white mt-7 inline-flex">

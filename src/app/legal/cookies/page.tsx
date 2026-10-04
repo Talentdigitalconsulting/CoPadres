@@ -37,6 +37,11 @@ export default function PaginaCookies() {
         </tbody>
       </table>
       <p>
+        Además, si instalas o usas la app sin conexión, el navegador guarda (cifrado y solo en tu dispositivo) el código de la app
+        para poder abrirla sin internet y los cambios pendientes de subir. Es almacenamiento técnico necesario para esa función; se
+        borra al cerrar sesión, salvo los cambios aún no subidos, que se envían a tu cuenta al volver a entrar.
+      </p>
+      <p>
         Según el artículo 22.2 de la LSSI-CE, estas cookies están exentas de consentimiento porque son necesarias para prestar el
         servicio que solicitas. Aun así te informamos de ellas.
       </p>

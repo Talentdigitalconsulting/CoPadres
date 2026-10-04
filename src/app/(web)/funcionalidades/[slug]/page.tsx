@@ -6,8 +6,8 @@ import { funcionalidadPorSlug } from "@/contenido/funcionalidades";
 // Se renderiza en cada petición para aplicar la CSP con nonce.
 export const dynamic = "force-dynamic";
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const f = funcionalidadPorSlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const f = funcionalidadPorSlug((await params).slug);
   if (!f) return {};
   const ruta = `/funcionalidades/${f.slug}`;
   return {
@@ -18,8 +18,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function PaginaFuncionalidad({ params }: { params: { slug: string } }) {
-  const f = funcionalidadPorSlug(params.slug);
+export default async function PaginaFuncionalidad({ params }: { params: Promise<{ slug: string }> }) {
+  const f = funcionalidadPorSlug((await params).slug);
   if (!f) notFound();
   const relacionadas = (f.relacionadas ?? [])
     .map((s) => funcionalidadPorSlug(s))

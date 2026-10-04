@@ -13,7 +13,7 @@ export async function GET(peticion: Request) {
   const siguiente = rutaSegura(searchParams.get("siguiente"), "/app");
 
   if (codigo) {
-    const supabase = crearClienteServidor();
+    const supabase = await crearClienteServidor();
     const { error } = await supabase.auth.exchangeCodeForSession(codigo);
     if (!error) {
       return NextResponse.redirect(new URL(siguiente, origin));

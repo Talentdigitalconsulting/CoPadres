@@ -25,7 +25,7 @@ export default function PaginaFuncionalidades() {
       }} />
       <header className="max-w-2xl">
         <p className="chip bg-salvia-100 text-salvia-800 mb-4">Funcionalidades</p>
-        <h1 className="font-display text-4xl md:text-5xl leading-tight">Todo lo que necesitáis para coordinaros, en un solo sitio</h1>
+        <h1 className="font-display text-4xl md:text-5xl leading-tight md:leading-[1.08]">Todo lo que necesitáis para coordinaros, en un solo sitio</h1>
         <p className="text-carbon-suave mt-4 text-lg leading-relaxed">
           Cada función está pensada para quitar un motivo de discusión y dejar constancia de lo acordado.
         </p>

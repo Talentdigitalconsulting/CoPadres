@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 
 /** Datos estructurados (schema.org) para Google y los buscadores de IA. */
-export default function JsonLd({ datos }: { datos: Record<string, unknown> | Record<string, unknown>[] }) {
-  const nonce = headers().get("x-nonce") ?? undefined;
+export default async function JsonLd({ datos }: { datos: Record<string, unknown> | Record<string, unknown>[] }) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <script
       type="application/ld+json"

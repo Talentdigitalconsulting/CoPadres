@@ -211,7 +211,7 @@ export default function PaginaAjustes() {
   const Interruptor = ({ activo, onCambio }: { activo: boolean; onCambio: (v: boolean) => void }) => (
     <button type="button" onClick={() => onCambio(!activo)}
       className={`w-11 h-6 rounded-full transition-colors relative ${activo ? "bg-salvia-600" : "bg-carbon-linea"}`}>
-      <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${activo ? "left-5.5 right-0.5" : "left-0.5"}`}
+      <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-sm transition-all ${activo ? "left-5.5 right-0.5" : "left-0.5"}`}
         style={{ left: activo ? "1.375rem" : "0.125rem" }} />
     </button>
   );
@@ -383,7 +383,7 @@ export default function PaginaAjustes() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={alta2fa.qr} alt="Código QR para la app de autenticación" className="w-44 h-44 bg-white rounded-lg p-2" />
               <p className="text-xs text-carbon-suave break-all">
-                ¿No puedes escanearlo? Escribe esta clave: <code className="bg-white px-1.5 py-0.5 rounded">{alta2fa.secreto}</code>
+                ¿No puedes escanearlo? Escribe esta clave: <code className="bg-white px-1.5 py-0.5 rounded-sm">{alta2fa.secreto}</code>
               </p>
               <p className="text-sm">2. Escribe el código de 6 dígitos que aparece:</p>
               <div className="flex gap-2">

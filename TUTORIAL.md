@@ -287,3 +287,26 @@ datos personales ni respuestas de Supabase), `public/offline.html` (pantalla «S
 Para publicarla además en las tiendas: Google Play admite esta misma app empaquetada como TWA
 (herramienta *Bubblewrap*, cuenta de desarrollador de 25 $); App Store exige envolverla con
 *Capacitor* y una cuenta de Apple Developer (99 $/año).
+
+---
+
+## Modo sin conexión (los datos siempre acaban online)
+
+Todos los datos se guardan en Supabase. Si el móvil se queda sin internet, la app sigue funcionando:
+
+1. **Pantallas disponibles**: al entrar con conexión, la app deja preparadas todas sus pantallas para abrirlas sin internet.
+2. **Consultar**: se ve la última versión de los datos que ya habías abierto (copia cifrada en el dispositivo).
+3. **Registrar**: gastos (con comprobante), diario, mensajes, calendario, actividades y gastos recurrentes se guardan
+   **cifrados (AES-256)** en una cola del dispositivo. Un aviso indica cuántos cambios hay pendientes y cuáles son.
+4. **Subida automática**: al volver la conexión (o al abrir la app) se suben solos a Supabase, en orden, con la sesión vigente.
+   La fecha que queda registrada es la de la subida (así nadie puede antedatar mensajes o gastos).
+5. **Rechazos**: si la base de datos rechaza algún cambio (por ejemplo, porque el otro progenitor ya cambió lo mismo), se
+   muestra un aviso con el detalle.
+6. **Cerrar sesión**: borra las copias de consulta y las pantallas guardadas. Si quedan cambios sin subir, la app avisa; se
+   conservan cifrados y solo se suben cuando su autor vuelve a entrar.
+
+Requiere conexión: invitar al otro progenitor, pagos, exportar o eliminar la cuenta, el asistente de IA y el filtro de tono
+(sin conexión, el mensaje se guarda tal cual).
+
+Código: `src/lib/offline/` (cola, cifrado y copias), `src/components/EstadoConexion.tsx` (aviso) y `public/sw.js`.
+No hace falta ningún cambio en Supabase.

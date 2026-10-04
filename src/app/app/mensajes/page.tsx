@@ -122,7 +122,7 @@ export default function PaginaMensajes() {
               <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 shadow-tarjeta ${
                 mio ? "bg-salvia-700 text-crema-50 rounded-br-md" : "bg-white text-carbon rounded-bl-md"
               }`}>
-                <p className="text-sm whitespace-pre-wrap break-words">{m.texto}</p>
+                <p className="text-sm whitespace-pre-wrap wrap-break-word">{m.texto}</p>
                 <p className={`text-[10px] mt-1 ${mio ? "text-salvia-200" : "text-carbon-suave"}`}>
                   {!mio && `${nombreDe(miembros, m.remitente_id).split(" ")[0]} · `}
                   {fechaHora(m.creado_en)}

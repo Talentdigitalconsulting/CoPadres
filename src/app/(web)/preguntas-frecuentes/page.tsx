@@ -54,7 +54,7 @@ export default function PaginaPreguntas() {
         "@type": "FAQPage",
         mainEntity: todas.map((q) => ({ "@type": "Question", name: q.p, acceptedAnswer: { "@type": "Answer", text: q.r } })),
       }} />
-      <h1 className="font-display text-4xl md:text-5xl leading-tight">Preguntas frecuentes</h1>
+      <h1 className="font-display text-4xl md:text-5xl leading-tight md:leading-[1.08]">Preguntas frecuentes</h1>
       <p className="text-carbon-suave mt-4">¿No encuentras tu respuesta? <Link href="/contacto" className="text-salvia-700 underline">Escríbenos</Link>.</p>
       {GRUPOS.map((g) => (
         <section key={g.titulo} className="mt-10">
