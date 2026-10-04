@@ -63,7 +63,7 @@ export default function PaginaInformes() {
 
   if (cargando) return <p className="text-sm text-carbon-suave">Cargando…</p>;
 
-  const totalGastos = datos?.gastos.reduce((t, g) => t + Number(g.importe), 0) ?? 0;
+  const totalGastos = datos?.gastos.filter((g) => g.estado !== "anulado").reduce((t, g) => t + Number(g.importe), 0) ?? 0;
 
   return (
     <div className="space-y-6">

@@ -5,20 +5,26 @@ import { crearClienteNavegador } from "@/lib/supabase/client";
 import { useFamilia, nombreDe } from "@/lib/useFamilia";
 import { euros, fechaCorta } from "@/lib/utils";
 import type { EventoCustodia, Gasto, SolicitudCambio } from "@/lib/tipos";
+import { generarCuotas, useActividades } from "@/lib/useActividades";
+import { quienLleva, sesionesEnRango } from "@/lib/recurrencias";
+import { colorHijo } from "@/lib/colores";
 
 /** Panel de inicio: lo importante de un vistazo. */
 export default function PaginaInicio() {
-  const { cargando, usuarioId, perfil, familia, miembros, otroProgenitor } = useFamilia();
+  const { cargando, usuarioId, perfil, familia, miembros, hijos, otroProgenitor } = useFamilia();
   const [eventos, setEventos] = useState<EventoCustodia[]>([]);
   const [gastosPendientes, setGastosPendientes] = useState<Gasto[]>([]);
   const [solicitudes, setSolicitudes] = useState<SolicitudCambio[]>([]);
   const [saldo, setSaldo] = useState(0);
+  const agenda = useActividades(familia?.id);
 
   useEffect(() => {
     if (!familia) return;
     const supabase = crearClienteNavegador();
     const hoy = new Date().toISOString().slice(0, 10);
     (async () => {
+      // Registra las cuotas recurrentes que ya toquen antes de calcular el saldo.
+      await generarCuotas(familia.id);
       const [{ data: ev }, { data: gp }, { data: sc }, { data: aprobados }] = await Promise.all([
         supabase.from("eventos_custodia").select("*").eq("familia_id", familia.id)
           .gte("fecha_fin", hoy).order("fecha_inicio").limit(5),
@@ -49,7 +55,13 @@ export default function PaginaInicio() {
   const paraMi = {
     gastos: gastosPendientes.filter((g) => g.pagado_por !== usuarioId).length,
     solicitudes: solicitudes.filter((s) => s.solicitado_por !== usuarioId).length,
+    recurrentes: agenda.recurrentes.filter(
+      (r) => (r.estado === "propuesto" && r.creado_por !== usuarioId) ||
+        (r.cambio_propuesto && r.cambio_propuesto_por !== usuarioId)
+    ).length,
   };
+  const hoy = new Date();
+  const sesionesHoy = sesionesEnRango(agenda.actividades, agenda.excepciones, hoy, hoy);
 
   return (
     <div className="space-y-6">
@@ -74,7 +86,7 @@ export default function PaginaInicio() {
       )}
 
       {/* Cosas que requieren tu acción */}
-      {(paraMi.gastos > 0 || paraMi.solicitudes > 0) && (
+      {(paraMi.gastos > 0 || paraMi.solicitudes > 0 || paraMi.recurrentes > 0) && (
         <div className="tarjeta bg-crema-200/70 border-arcilla/30">
           <h2 className="font-semibold text-sm mb-2">Pendiente de ti</h2>
           <ul className="space-y-1.5 text-sm text-carbon-claro">
@@ -85,6 +97,13 @@ export default function PaginaInicio() {
                 </Link>
               </li>
             )}
+            {paraMi.recurrentes > 0 && (
+              <li>
+                <Link href="/app/gastos?vista=recurrentes" className="hover:underline">
+                  → {paraMi.recurrentes} propuesta{paraMi.recurrentes > 1 ? "s" : ""} de gasto recurrente por aceptar
+                </Link>
+              </li>
+            )}
             {paraMi.solicitudes > 0 && (
               <li>
                 <Link href="/app/calendario" className="hover:underline">
@@ -92,6 +111,35 @@ export default function PaginaInicio() {
                 </Link>
               </li>
             )}
+          </ul>
+        </div>
+      )}
+
+      {/* Actividades de hoy */}
+      {sesionesHoy.length > 0 && (
+        <div className="tarjeta">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="etiqueta mb-0">Actividades de hoy</h2>
+            <Link href="/app/hijos" className="text-xs text-salvia-700 font-semibold hover:underline">Agenda →</Link>
+          </div>
+          <ul className="space-y-2">
+            {sesionesHoy.map((s) => {
+              const lleva = quienLleva(s, agenda.eventos);
+              const hijo = hijos.find((h) => h.id === s.actividad.hijo_id);
+              return (
+                <li key={s.clave} className={`flex items-center gap-3 rounded-xl border px-3 py-2 ${colorHijo(hijos, s.actividad.hijo_id).bloque}`}>
+                  <span className="text-sm font-semibold w-12 shrink-0">{s.inicio}</span>
+                  <span className={`text-sm flex-1 ${s.estado === "cancelada" ? "line-through opacity-60" : ""}`}>
+                    {s.actividad.nombre}{hijo && ` · ${hijo.nombre}`}
+                  </span>
+                  <span className="text-xs opacity-80 shrink-0">
+                    {s.estado === "cancelada" ? "Cancelada" : lleva
+                      ? lleva === usuarioId ? "Llevas tú" : `Lleva ${nombreDe(miembros, lleva).split(" ")[0]}`
+                      : ""}
+                  </span>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}

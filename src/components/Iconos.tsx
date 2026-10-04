@@ -58,3 +58,19 @@ export const IconoMas = ({ className = "w-5 h-5" }: Props) => (
     <path d="M12 5v14M5 12h14" />
   </svg>
 );
+export const IconoHijos = ({ className = "w-5 h-5" }: Props) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="8" cy="7" r="3" /><circle cx="17" cy="9.5" r="2.3" />
+    <path d="M2.5 20v-1.5A4.5 4.5 0 0 1 7 14h2a4.5 4.5 0 0 1 4.5 4.5V20" /><path d="M15 14.5h2.5a3.5 3.5 0 0 1 3.5 3.5v2" />
+  </svg>
+);
+export const IconoRepetir = ({ className = "w-4 h-4" }: Props) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M17 2l3 3-3 3" /><path d="M4 11V9a4 4 0 0 1 4-4h12" /><path d="M7 22l-3-3 3-3" /><path d="M20 13v2a4 4 0 0 1-4 4H4" />
+  </svg>
+);
+export const IconoMenu = ({ className = "w-5 h-5" }: Props) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+    <path d="M4 7h16M4 12h16M4 17h16" />
+  </svg>
+);

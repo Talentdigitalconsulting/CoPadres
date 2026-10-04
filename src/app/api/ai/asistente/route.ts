@@ -32,9 +32,9 @@ export async function POST(peticion: Request) {
   const fid = miembro.familia_id;
 
   const hoy = new Date().toISOString().slice(0, 10);
-  const [familia, hijos, eventos, gastos, solicitudes, diario, perfiles] = await Promise.all([
+  const [familia, hijos, eventos, gastos, solicitudes, diario, perfiles, actividades, recurrentes] = await Promise.all([
     supabase.from("familias").select("nombre, reparto_gastos").eq("id", fid).single(),
-    supabase.from("hijos").select("nombre, fecha_nacimiento").eq("familia_id", fid),
+    supabase.from("hijos").select("id, nombre, fecha_nacimiento").eq("familia_id", fid),
     supabase.from("eventos_custodia").select("titulo, tipo, fecha_inicio, fecha_fin, progenitor_id, notas")
       .eq("familia_id", fid).gte("fecha_fin", hoy).order("fecha_inicio").limit(30),
     supabase.from("gastos").select("concepto, categoria, importe, reparto_pct, estado, pagado_por, creado_en")
@@ -44,6 +44,13 @@ export async function POST(peticion: Request) {
     supabase.from("diario").select("categoria, titulo, contenido, creado_en")
       .eq("familia_id", fid).order("creado_en", { ascending: false }).limit(30),
     supabase.from("perfiles").select("id, nombre"),
+    // Si la migración 002 aún no está aplicada, estas consultas devuelven error y se ignoran.
+    supabase.from("actividades")
+      .select("nombre, categoria, hijo_id, horarios, frecuencia, fecha_inicio, fecha_fin, meses_sin_actividad, lugar, quien_lleva")
+      .eq("familia_id", fid),
+    supabase.from("gastos_recurrentes")
+      .select("concepto, modo, importe, frecuencia, dia_cobro, meses_sin_cobro, fecha_inicio, fecha_fin, pausa_desde, pausa_hasta, estado, pagado_por, reparto_pct")
+      .eq("familia_id", fid),
   ]);
 
   const nombreDe = (id: string | null) =>
@@ -58,6 +65,13 @@ export async function POST(peticion: Request) {
     gastos_recientes: gastos.data?.map((g) => ({ ...g, pagado_por: nombreDe(g.pagado_por) })),
     solicitudes_cambio: solicitudes.data?.map((s) => ({ ...s, solicitado_por: nombreDe(s.solicitado_por) })),
     diario_reciente: diario.data,
+    // horarios: dia 1 = lunes … 7 = domingo. quien_lleva null = según la custodia del día.
+    actividades_de_los_hijos: actividades.data?.map(({ hijo_id, ...a }) => ({
+      ...a,
+      hijo: hijos.data?.find((h) => h.id === hijo_id)?.nombre ?? null,
+      quien_lleva: a.quien_lleva ? nombreDe(a.quien_lleva) : "según la custodia de cada día",
+    })),
+    gastos_recurrentes: recurrentes.data?.map((r) => ({ ...r, pagado_por: nombreDe(r.pagado_por) })),
   };
 
   try {
@@ -74,7 +88,8 @@ export async function POST(peticion: Request) {
 Hablas SIEMPRE en español, con un tono sereno, práctico y neutral: nunca tomas partido por
 ninguno de los progenitores y siempre pones el bienestar de los hijos en el centro.
 
-Puedes: resumir la situación (gastos pendientes, saldo, próximos intercambios), ayudar a redactar
+Puedes: resumir la situación (gastos pendientes, saldo, próximos intercambios, actividades de los
+hijos y quién las lleva, cuotas recurrentes y meses sin cobro), ayudar a redactar
 mensajes serenos, sugerir cómo organizar vacaciones o gastos, y explicar cómo usar la app.
 No eres abogado: si te preguntan cuestiones legales, da orientación general y recomienda
 consultar con un abogado de familia o mediador.

@@ -11,6 +11,9 @@ import { useFamilia, nombreDe } from "@/lib/useFamilia";
 import { fechaCorta, fechaHora } from "@/lib/utils";
 import { TIPOS_EVENTO, type EventoCustodia, type SolicitudCambio } from "@/lib/tipos";
 import { IconoMas } from "@/components/Iconos";
+import Link from "next/link";
+import { useActividades } from "@/lib/useActividades";
+import { aISO, quienLleva, sesionesEnRango } from "@/lib/recurrencias";
 
 function Calendario() {
   const params = useSearchParams();
@@ -64,6 +67,14 @@ function Calendario() {
       }),
     [mes]
   );
+
+  // Actividades recurrentes de los hijos (judo, clases…) del mes visible.
+  const agenda = useActividades(familia?.id);
+  const sesionesMes = useMemo(
+    () => (dias.length ? sesionesEnRango(agenda.actividades, agenda.excepciones, dias[0], dias[dias.length - 1]) : []),
+    [agenda.actividades, agenda.excepciones, dias]
+  );
+  const sesionesDelDia = (d: Date) => sesionesMes.filter((s) => s.fecha === aISO(d));
 
   const eventosDelDia = (d: Date) =>
     eventos.filter((e) =>
@@ -217,6 +228,9 @@ function Calendario() {
                     {evs.slice(0, 3).map((e) => (
                       <span key={e.id} className={`w-1.5 h-1.5 rounded-full ${colorEvento(e)}`} />
                     ))}
+                    {sesionesDelDia(d).some((s) => s.estado !== "cancelada") && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-carbon-suave" />
+                    )}
                   </span>
                 </button>
               );
@@ -226,14 +240,35 @@ function Calendario() {
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-salvia-600" /> Contigo</span>
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-salvia-300" /> Con el otro progenitor</span>
             <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-arcilla/80" /> Citas y otros</span>
+            <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-carbon-suave" /> Actividades de los hijos</span>
           </div>
         </div>
 
         {/* Detalle del día */}
         <div className="tarjeta">
           <h2 className="etiqueta">{format(diaSeleccionado, "EEEE d 'de' MMMM", { locale: es })}</h2>
+          {sesionesDelDia(diaSeleccionado).length > 0 && (
+            <ul className="space-y-2 mb-3">
+              {sesionesDelDia(diaSeleccionado).map((s) => {
+                const lleva = quienLleva(s, agenda.eventos);
+                return (
+                  <li key={s.clave} className="border-l-2 border-carbon-suave pl-3">
+                    <Link href="/app/hijos" className="hover:underline">
+                      <p className={`text-sm font-medium ${s.estado === "cancelada" ? "line-through text-carbon-suave" : ""}`}>
+                        {s.inicio} · {s.actividad.nombre}
+                      </p>
+                    </Link>
+                    <p className="text-xs text-carbon-suave">
+                      Actividad · {hijos.find((h) => h.id === s.actividad.hijo_id)?.nombre ?? ""}
+                      {s.estado === "cancelada" ? " · cancelada" : lleva ? ` · lleva ${nombreDe(miembros, lleva).split(" ")[0]}` : ""}
+                    </p>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
           {seleccionados.length === 0 ? (
-            <p className="text-sm text-carbon-suave">Sin eventos este día.</p>
+            sesionesDelDia(diaSeleccionado).length === 0 && <p className="text-sm text-carbon-suave">Sin eventos este día.</p>
           ) : (
             <ul className="space-y-3">
               {seleccionados.map((e) => (

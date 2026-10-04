@@ -25,6 +25,14 @@ export async function GET() {
       fid ? supabase.from("registro_auditoria").select("*").eq("familia_id", fid) : Promise.resolve({ data: [] }),
     ]);
 
+  // Actividades y gastos recurrentes (migración 002; si aún no existe, se exporta vacío).
+  const [actividades, excepciones, recurrentes, omisiones] = await Promise.all([
+    fid ? supabase.from("actividades").select("*").eq("familia_id", fid) : Promise.resolve({ data: [] }),
+    fid ? supabase.from("actividad_excepciones").select("*").eq("familia_id", fid) : Promise.resolve({ data: [] }),
+    fid ? supabase.from("gastos_recurrentes").select("*").eq("familia_id", fid) : Promise.resolve({ data: [] }),
+    fid ? supabase.from("gastos_recurrentes_omisiones").select("*").eq("familia_id", fid) : Promise.resolve({ data: [] }),
+  ]);
+
   const exportacion = {
     generado_en: new Date().toISOString(),
     aplicacion: "CoPadres",
@@ -38,6 +46,10 @@ export async function GET() {
     diario: diario.data,
     notificaciones: notificaciones.data,
     registro_auditoria: auditoria.data,
+    actividades: actividades.data ?? [],
+    actividad_excepciones: excepciones.data ?? [],
+    gastos_recurrentes: recurrentes.data ?? [],
+    gastos_recurrentes_omisiones: omisiones.data ?? [],
   };
 
   return new NextResponse(JSON.stringify(exportacion, null, 2), {

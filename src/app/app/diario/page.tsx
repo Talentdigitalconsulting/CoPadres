@@ -20,7 +20,7 @@ function Diario() {
   const params = useSearchParams();
   const { cargando, usuarioId, familia, miembros, hijos } = useFamilia();
   const [entradas, setEntradas] = useState<EntradaDiario[]>([]);
-  const [filtroHijo, setFiltroHijo] = useState("");
+  const [filtroHijo, setFiltroHijo] = useState(params.get("hijo") ?? "");
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [mostrarFormulario, setMostrarFormulario] = useState(params.get("nuevo") === "1");
 
@@ -28,7 +28,7 @@ function Diario() {
   const [categoria, setCategoria] = useState<EntradaDiario["categoria"]>("salud");
   const [titulo, setTitulo] = useState("");
   const [contenido, setContenido] = useState("");
-  const [hijoId, setHijoId] = useState("");
+  const [hijoId, setHijoId] = useState(params.get("hijo") ?? "");
 
   const cargarEntradas = async () => {
     if (!familia) return;

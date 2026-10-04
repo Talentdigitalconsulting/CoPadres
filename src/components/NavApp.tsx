@@ -5,13 +5,14 @@ import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
 import {
   IconoInicio, IconoCalendario, IconoGastos, IconoMensajes, IconoDiario,
-  IconoInformes, IconoAsistente, IconoCampana, IconoAjustes, IconoSalir,
+  IconoInformes, IconoAsistente, IconoCampana, IconoAjustes, IconoSalir, IconoHijos, IconoMenu,
 } from "@/components/Iconos";
 import { crearClienteNavegador } from "@/lib/supabase/client";
 
 const ENLACES = [
   { href: "/app", texto: "Inicio", Icono: IconoInicio },
   { href: "/app/calendario", texto: "Calendario", Icono: IconoCalendario },
+  { href: "/app/hijos", texto: "Hijos", Icono: IconoHijos },
   { href: "/app/gastos", texto: "Gastos", Icono: IconoGastos },
   { href: "/app/mensajes", texto: "Mensajes", Icono: IconoMensajes },
   { href: "/app/diario", texto: "Diario", Icono: IconoDiario },
@@ -19,14 +20,19 @@ const ENLACES = [
   { href: "/app/asistente", texto: "Asistente", Icono: IconoAsistente },
 ];
 
-// En móvil solo caben 5 accesos en la barra inferior.
+// En móvil solo caben 5 accesos en la barra inferior; el resto va en el menú «Más».
 const ENLACES_MOVIL = ENLACES.slice(0, 5);
+const ENLACES_MAS = ENLACES.slice(5);
 
 /** Navegación de la app: barra lateral en escritorio, barra inferior en móvil. */
 export default function NavApp() {
   const ruta = usePathname();
   const router = useRouter();
   const [sinLeer, setSinLeer] = useState(0);
+  const [menuAbierto, setMenuAbierto] = useState(false);
+
+  // Cerrar el menú al cambiar de página.
+  useEffect(() => setMenuAbierto(false), [ruta]);
 
   // Registrar el service worker (PWA) y contar notificaciones en tiempo real.
   useEffect(() => {
@@ -128,9 +134,36 @@ export default function NavApp() {
               </span>
             )}
           </Link>
-          <Link href="/app/ajustes" className="p-2"><IconoAjustes /></Link>
+          <button type="button" className="p-2" aria-label="Más opciones" aria-expanded={menuAbierto}
+            onClick={() => setMenuAbierto(!menuAbierto)}>
+            <IconoMenu />
+          </button>
         </div>
       </header>
+
+      {/* ---------- Móvil: menú «Más» ---------- */}
+      {menuAbierto && (
+        <div className="md:hidden fixed inset-0 z-50 bg-carbon/30" onClick={() => setMenuAbierto(false)}>
+          <nav onClick={(e) => e.stopPropagation()}
+            className="absolute top-14 right-3 w-60 bg-white rounded-tarjeta shadow-flotante border border-carbon-linea/60 py-2">
+            {ENLACES_MAS.map(({ href, texto, Icono }) => (
+              <Link key={href} href={href}
+                className={`flex items-center gap-3 px-4 py-3 text-sm ${
+                  activo(href) ? "text-salvia-700 font-semibold bg-salvia-50" : "text-carbon"}`}>
+                <Icono className="w-5 h-5" /> {texto}
+              </Link>
+            ))}
+            <div className="border-t border-carbon-linea my-1" />
+            <Link href="/app/ajustes"
+              className={`flex items-center gap-3 px-4 py-3 text-sm ${activo("/app/ajustes") ? "text-salvia-700 font-semibold" : "text-carbon"}`}>
+              <IconoAjustes /> Ajustes
+            </Link>
+            <button onClick={salir} className="w-full flex items-center gap-3 px-4 py-3 text-sm text-carbon">
+              <IconoSalir /> Salir
+            </button>
+          </nav>
+        </div>
+      )}
 
       {/* ---------- Móvil: barra inferior ---------- */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-carbon-linea flex z-40 pb-[env(safe-area-inset-bottom)]">
