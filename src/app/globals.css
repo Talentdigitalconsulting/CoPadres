@@ -12,6 +12,11 @@ body {
 
 /* ---------- Componentes reutilizables ---------- */
 @layer components {
+  /* Títulos: Fredoka en peso medio (el nombre del logotipo usa 600) */
+  .font-display {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
   .tarjeta {
     @apply bg-white rounded-tarjeta shadow-tarjeta border border-carbon-linea/60 p-5;
   }

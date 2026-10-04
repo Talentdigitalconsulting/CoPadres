@@ -39,7 +39,8 @@ const config: Config = {
         vino: "#a05446",
       },
       fontFamily: {
-        display: ["Fraunces", "Georgia", "serif"],
+        // Títulos con la misma tipografía redondeada que el nombre del logotipo
+        display: ["Fredoka", "Nunito", "system-ui", "sans-serif"],
         marca: ["Fredoka", "Nunito", "system-ui", "sans-serif"],
         sans: ["Inter", "system-ui", "sans-serif"],
       },
