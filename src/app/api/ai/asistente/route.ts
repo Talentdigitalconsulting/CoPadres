@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { crearClienteServidor } from "@/lib/supabase/server";
+import { dentroDelLimite, respuestaLimite } from "@/lib/limites";
+import { origenPermitido } from "@/lib/seguridad";
 
 /**
  * Asistente IA de CoPadres: responde preguntas sobre la coordinación familiar
@@ -18,11 +20,13 @@ const Entrada = z.object({
 });
 
 export async function POST(peticion: Request) {
+  if (!origenPermitido(peticion)) return NextResponse.json({ error: "Origen no permitido" }, { status: 403 });
   const supabase = crearClienteServidor();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  if (!(await dentroDelLimite(supabase, "asistente", 40, 3600))) return respuestaLimite();
 
-  const cuerpo = Entrada.safeParse(await peticion.json());
+  const cuerpo = Entrada.safeParse(await peticion.json().catch(() => null));
   if (!cuerpo.success) return NextResponse.json({ error: "Petición no válida" }, { status: 400 });
 
   // Contexto del espacio familiar (limitado para controlar costes).

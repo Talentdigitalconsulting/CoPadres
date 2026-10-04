@@ -235,3 +235,29 @@ Ajustes.
 6. **Adjuntos en el diario** (informes médicos, boletines de notas).
 7. **Modo "documento judicial"**: informe con numeración de páginas y hash de integridad.
 8. **App multi-familia** para familias reconstituidas.
+
+---
+
+## Actualización: actividades, gastos recurrentes y seguridad (octubre 2026)
+
+### 1. Ejecutar las migraciones (una sola vez, en este orden)
+En Supabase → SQL Editor, pega y ejecuta cada archivo completo:
+1. `supabase/migracion_002_actividades_y_gastos_recurrentes.sql`
+2. `supabase/migracion_003_seguridad.sql`
+
+Las instalaciones nuevas no lo necesitan: `schema.sql` ya incluye ambas.
+
+### 2. Ajustes de seguridad en el panel de Supabase
+- **Authentication → Providers → Email:** activa *Confirm email* y pon la longitud mínima de contraseña en **10**.
+- **Authentication → Providers → Email → Password requirements:** letras y números. Si tu plan lo permite, activa *Leaked password protection*.
+- **Authentication → Multi-Factor:** comprueba que **TOTP** está habilitado (verificación en dos pasos).
+- **Authentication → URL Configuration:** *Site URL* = tu dominio y en *Redirect URLs* añade `https://TU-DOMINIO/auth/callback`.
+- **Authentication → Rate Limits:** deja los límites por defecto o más estrictos.
+- **Project Settings → General:** si es posible, usa una región de la **Unión Europea** (p. ej. Frankfurt) por el RGPD.
+
+### 3. Variables en Vercel
+- `NEXT_PUBLIC_SITE_URL` = tu dominio definitivo (se usa en el sitemap, robots, llms.txt y las URLs canónicas).
+
+### 4. Después de publicar
+- Da de alta la web en **Google Search Console** y **Bing Webmaster Tools** y envía `https://TU-DOMINIO/sitemap.xml`.
+- Comprueba las cabeceras en https://securityheaders.com

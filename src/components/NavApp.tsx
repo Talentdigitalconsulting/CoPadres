@@ -31,6 +31,27 @@ export default function NavApp() {
   const [sinLeer, setSinLeer] = useState(0);
   const [menuAbierto, setMenuAbierto] = useState(false);
 
+  // Cierre de sesión automático tras 60 minutos sin actividad (protege si el
+  // móvil o el ordenador quedan desbloqueados al alcance de otra persona).
+  useEffect(() => {
+    const LIMITE = 60 * 60 * 1000;
+    let ultima = Date.now();
+    const marcar = () => { ultima = Date.now(); };
+    const eventos = ["pointerdown", "keydown", "scroll", "touchstart", "visibilitychange"];
+    eventos.forEach((e) => window.addEventListener(e, marcar, { passive: true }));
+    const reloj = window.setInterval(async () => {
+      if (Date.now() - ultima > LIMITE) {
+        window.clearInterval(reloj);
+        await crearClienteNavegador().auth.signOut();
+        window.location.href = "/login?motivo=inactividad";
+      }
+    }, 60 * 1000);
+    return () => {
+      eventos.forEach((e) => window.removeEventListener(e, marcar));
+      window.clearInterval(reloj);
+    };
+  }, []);
+
   // Cerrar el menú al cambiar de página.
   useEffect(() => setMenuAbierto(false), [ruta]);
 

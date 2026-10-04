@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { crearClienteNavegador } from "@/lib/supabase/client";
 import { useFamilia } from "@/lib/useFamilia";
+import { validarClave } from "@/lib/claves";
+import MedidorClave from "@/components/MedidorClave";
 
 type Suscripcion = { plan: string | null; estado: string; periodo_fin: string | null } | null;
 
@@ -29,6 +31,11 @@ export default function PaginaAjustes() {
   const [clave, setClave] = useState("");
   // Suscripción
   const [suscripcion, setSuscripcion] = useState<Suscripcion>(null);
+  // Verificación en dos pasos (2FA)
+  const [factor2fa, setFactor2fa] = useState<{ id: string } | null>(null);
+  const [alta2fa, setAlta2fa] = useState<{ id: string; qr: string; secreto: string } | null>(null);
+  const [codigo2fa, setCodigo2fa] = useState("");
+  const [error2fa, setError2fa] = useState<string | null>(null);
 
   useEffect(() => {
     if (perfil) {
@@ -57,6 +64,61 @@ export default function PaginaAjustes() {
       setSuscripcion(data as Suscripcion);
     })();
   }, []);
+
+  const cargar2fa = async () => {
+    const supabase = crearClienteNavegador();
+    const { data } = await supabase.auth.mfa.listFactors();
+    const verificado = data?.totp?.find((f) => f.status === "verified");
+    setFactor2fa(verificado ? { id: verificado.id } : null);
+  };
+  useEffect(() => {
+    cargar2fa();
+  }, []);
+
+  const empezar2fa = async () => {
+    setError2fa(null);
+    const supabase = crearClienteNavegador();
+    // Limpia altas a medias de intentos anteriores.
+    const { data: lista } = await supabase.auth.mfa.listFactors();
+    for (const f of lista?.all ?? []) {
+      if (f.status !== "verified") await supabase.auth.mfa.unenroll({ factorId: f.id });
+    }
+    const { data, error } = await supabase.auth.mfa.enroll({
+      factorType: "totp",
+      friendlyName: `CoPadres ${new Date().toISOString().slice(0, 10)}`,
+    });
+    if (error || !data) return setError2fa("No se pudo iniciar la activación. Inténtalo de nuevo.");
+    setAlta2fa({ id: data.id, qr: data.totp.qr_code, secreto: data.totp.secret });
+    setCodigo2fa("");
+  };
+
+  const confirmar2fa = async () => {
+    if (!alta2fa) return;
+    const supabase = crearClienteNavegador();
+    const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: alta2fa.id, code: codigo2fa.trim() });
+    if (error) return setError2fa("Código incorrecto. Usa el código actual de tu app de autenticación.");
+    setAlta2fa(null);
+    setCodigo2fa("");
+    avisar("Verificación en dos pasos activada.");
+    cargar2fa();
+  };
+
+  const desactivar2fa = async () => {
+    if (!factor2fa) return;
+    if (!window.confirm("¿Desactivar la verificación en dos pasos? Tu cuenta quedará menos protegida.")) return;
+    const supabase = crearClienteNavegador();
+    const { error } = await supabase.auth.mfa.unenroll({ factorId: factor2fa.id });
+    if (error) return avisar("Para desactivarla, vuelve a entrar con tu código de verificación.");
+    await supabase.auth.refreshSession();
+    avisar("Verificación en dos pasos desactivada.");
+    cargar2fa();
+  };
+
+  const cerrarTodasLasSesiones = async () => {
+    if (!window.confirm("Se cerrará tu sesión en todos los dispositivos, incluido este. ¿Continuar?")) return;
+    await crearClienteNavegador().auth.signOut({ scope: "global" });
+    router.push("/login");
+  };
 
   const avisar = (texto: string) => {
     setAviso(texto);
@@ -102,7 +164,8 @@ export default function PaginaAjustes() {
   };
 
   const cambiarClave = async () => {
-    if (clave.length < 8) return avisar("La contraseña debe tener al menos 8 caracteres.");
+    const problema = await validarClave(clave, { email: perfil?.email ?? undefined, nombre: perfil?.nombre ?? undefined });
+    if (problema) return avisar(problema);
     const supabase = crearClienteNavegador();
     const { error } = await supabase.auth.updateUser({ password: clave });
     setClave("");
@@ -291,10 +354,66 @@ export default function PaginaAjustes() {
         <div>
           <label className="etiqueta">Nueva contraseña</label>
           <div className="flex gap-2">
-            <input type="password" className="campo" value={clave} placeholder="Mínimo 8 caracteres"
-              onChange={(e) => setClave(e.target.value)} />
+            <input type="password" className="campo" value={clave} placeholder="Mínimo 10 caracteres, letras y números"
+              autoComplete="new-password" maxLength={128} onChange={(e) => setClave(e.target.value)} />
             <button className="boton-secundario shrink-0 text-xs" onClick={cambiarClave}>Cambiar</button>
           </div>
+          <MedidorClave clave={clave} email={perfil?.email ?? undefined} nombre={perfil?.nombre ?? undefined} />
+        </div>
+
+        <hr className="border-carbon-linea" />
+        <div className="space-y-3">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium">Verificación en dos pasos</p>
+              <p className="text-xs text-carbon-suave mt-0.5">
+                Además de la contraseña, al entrar se pedirá un código de 6 dígitos de una app de autenticación.
+                Así nadie puede acceder aunque conozca tu contraseña.
+              </p>
+            </div>
+            <span className={`chip shrink-0 ${factor2fa ? "bg-salvia-100 text-salvia-800" : "bg-crema-200 text-carbon-suave"}`}>
+              {factor2fa ? "Activada" : "Desactivada"}
+            </span>
+          </div>
+          {factor2fa ? (
+            <button className="boton-secundario text-xs" onClick={desactivar2fa}>Desactivar</button>
+          ) : alta2fa ? (
+            <div className="bg-crema-100 rounded-xl p-4 space-y-3">
+              <p className="text-sm">1. Escanea este código con Google Authenticator, Microsoft Authenticator, 1Password…</p>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={alta2fa.qr} alt="Código QR para la app de autenticación" className="w-44 h-44 bg-white rounded-lg p-2" />
+              <p className="text-xs text-carbon-suave break-all">
+                ¿No puedes escanearlo? Escribe esta clave: <code className="bg-white px-1.5 py-0.5 rounded">{alta2fa.secreto}</code>
+              </p>
+              <p className="text-sm">2. Escribe el código de 6 dígitos que aparece:</p>
+              <div className="flex gap-2">
+                <input className="campo text-center tracking-[0.3em] font-semibold" inputMode="numeric" maxLength={6}
+                  autoComplete="one-time-code" value={codigo2fa} placeholder="000000"
+                  onChange={(e) => setCodigo2fa(e.target.value.replace(/\D/g, ""))} />
+                <button className="boton-primario shrink-0 text-xs" disabled={codigo2fa.length !== 6} onClick={confirmar2fa}>
+                  Activar
+                </button>
+              </div>
+              {error2fa && <p className="text-xs text-vino">{error2fa}</p>}
+              <button className="text-xs text-carbon-suave hover:underline" onClick={() => setAlta2fa(null)}>Cancelar</button>
+            </div>
+          ) : (
+            <>
+              <button className="boton-primario text-xs" onClick={empezar2fa}>Activar verificación en dos pasos</button>
+              {error2fa && <p className="text-xs text-vino">{error2fa}</p>}
+            </>
+          )}
+        </div>
+
+        <hr className="border-carbon-linea" />
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium">Sesiones abiertas</p>
+            <p className="text-xs text-carbon-suave mt-0.5">
+              Si usaste CoPadres en un dispositivo que ya no controlas, cierra todas las sesiones.
+            </p>
+          </div>
+          <button className="boton-secundario text-xs shrink-0" onClick={cerrarTodasLasSesiones}>Cerrar todas</button>
         </div>
       </section>
 
@@ -313,6 +432,19 @@ export default function PaginaAjustes() {
             Eliminar mi cuenta
           </button>
         </div>
+      </section>
+
+      {/* ---------- Legal ---------- */}
+      <section className="tarjeta space-y-2">
+        <h2 className="font-display text-lg">Información legal</h2>
+        <nav className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
+          <Link href="/legal/aviso-legal" className="text-salvia-700 hover:underline">Aviso legal</Link>
+          <Link href="/legal/terminos" className="text-salvia-700 hover:underline">Términos y condiciones</Link>
+          <Link href="/legal/privacidad" className="text-salvia-700 hover:underline">Privacidad</Link>
+          <Link href="/legal/cookies" className="text-salvia-700 hover:underline">Cookies</Link>
+          <Link href="/seguridad" className="text-salvia-700 hover:underline">Seguridad</Link>
+        </nav>
+        <p className="text-xs text-carbon-suave">© 2026 Talent &amp; Digital Consulting. Todos los derechos reservados.</p>
       </section>
     </div>
   );

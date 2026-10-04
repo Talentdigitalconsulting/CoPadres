@@ -8,6 +8,7 @@ import { CATEGORIAS_GASTO, type Gasto } from "@/lib/tipos";
 import { IconoMas, IconoRepetir } from "@/components/Iconos";
 import { generarCuotas } from "@/lib/useActividades";
 import HojaInferior from "@/components/HojaInferior";
+import { validarComprobante } from "@/lib/seguridad";
 import GastosRecurrentes, { type PrefillRecurrente } from "@/components/GastosRecurrentes";
 
 const COLORES_ESTADO: Record<Gasto["estado"], string> = {
@@ -42,6 +43,7 @@ function Gastos() {
   const [hijoId, setHijoId] = useState("");
   const [notas, setNotas] = useState("");
   const [archivo, setArchivo] = useState<File | null>(null);
+  const [errorArchivo, setErrorArchivo] = useState<string | null>(null);
 
   const cargarGastos = async () => {
     if (!familia) return;
@@ -353,8 +355,15 @@ function Gastos() {
             )}
             <div>
               <label className="etiqueta">Comprobante (foto o PDF, opcional pero recomendado)</label>
-              <input type="file" accept="image/*,.pdf" className="campo"
-                onChange={(e) => setArchivo(e.target.files?.[0] ?? null)} />
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf" className="campo"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] ?? null;
+                  const problema = f ? validarComprobante(f) : null;
+                  setErrorArchivo(problema);
+                  setArchivo(problema ? null : f);
+                  if (problema) e.target.value = "";
+                }} />
+              {errorArchivo && <p className="text-xs text-vino mt-1">{errorArchivo}</p>}
             </div>
             <div>
               <label className="etiqueta">Notas (opcional)</label>

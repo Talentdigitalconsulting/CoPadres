@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { z } from "zod";
 import { crearClienteServidor } from "@/lib/supabase/server";
+import { dentroDelLimite, respuestaLimite } from "@/lib/limites";
+import { origenPermitido } from "@/lib/seguridad";
 
 /**
  * Filtro de tono IA: analiza el mensaje antes de enviarlo y, si es agresivo,
@@ -11,12 +13,14 @@ import { crearClienteServidor } from "@/lib/supabase/server";
 const Entrada = z.object({ texto: z.string().min(1).max(2000) });
 
 export async function POST(peticion: Request) {
+  if (!origenPermitido(peticion)) return NextResponse.json({ error: "Origen no permitido" }, { status: 403 });
   // Solo usuarios autenticados.
   const supabase = crearClienteServidor();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  if (!(await dentroDelLimite(supabase, "tono", 120, 3600))) return respuestaLimite();
 
-  const cuerpo = Entrada.safeParse(await peticion.json());
+  const cuerpo = Entrada.safeParse(await peticion.json().catch(() => null));
   if (!cuerpo.success) return NextResponse.json({ error: "Texto no válido" }, { status: 400 });
 
   try {

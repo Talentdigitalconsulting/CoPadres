@@ -24,13 +24,17 @@ export default function MarcoAuth({
       <p className="mt-6 text-xs text-carbon-suave max-w-md text-center">
         Al continuar aceptas los{" "}
         <Link href="/legal/terminos" className="underline hover:text-carbon">
-          Términos de uso
+          Términos y condiciones
         </Link>{" "}
         y la{" "}
         <Link href="/legal/privacidad" className="underline hover:text-carbon">
           Política de privacidad
         </Link>
         .
+      </p>
+      <p className="mt-2 text-[11px] text-carbon-suave/80 text-center">
+        <Link href="/legal/aviso-legal" className="hover:underline">Aviso legal</Link> ·{" "}
+        <Link href="/legal/cookies" className="hover:underline">Cookies</Link> · © 2026 Talent &amp; Digital Consulting
       </p>
     </main>
   );

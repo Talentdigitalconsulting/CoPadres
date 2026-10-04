@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import MarcoAuth from "@/components/MarcoAuth";
 import { crearClienteNavegador } from "@/lib/supabase/client";
+import { validarClave } from "@/lib/claves";
+import MedidorClave from "@/components/MedidorClave";
 
 /** El usuario llega aquí desde el enlace del correo de recuperación, ya autenticado. */
 export default function PaginaRestablecer() {
@@ -15,10 +17,15 @@ export default function PaginaRestablecer() {
   const guardar = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (clave.length < 8) return setError("La contraseña debe tener al menos 8 caracteres.");
     if (clave !== clave2) return setError("Las contraseñas no coinciden.");
     setCargando(true);
     const supabase = crearClienteNavegador();
+    const { data: { user } } = await supabase.auth.getUser();
+    const problema = await validarClave(clave, { email: user?.email ?? undefined });
+    if (problema) {
+      setCargando(false);
+      return setError(problema);
+    }
     const { error } = await supabase.auth.updateUser({ password: clave });
     setCargando(false);
     if (error) {
@@ -34,12 +41,14 @@ export default function PaginaRestablecer() {
       <form onSubmit={guardar} className="space-y-4">
         <div>
           <label className="etiqueta" htmlFor="clave">Nueva contraseña</label>
-          <input id="clave" type="password" required minLength={8} className="campo"
-            value={clave} onChange={(e) => setClave(e.target.value)} placeholder="Mínimo 8 caracteres" />
+          <input id="clave" type="password" required minLength={10} maxLength={128} autoComplete="new-password"
+            className="campo" value={clave} onChange={(e) => setClave(e.target.value)}
+            placeholder="Mínimo 10 caracteres, letras y números" />
+          <MedidorClave clave={clave} />
         </div>
         <div>
           <label className="etiqueta" htmlFor="clave2">Repítela</label>
-          <input id="clave2" type="password" required className="campo"
+          <input id="clave2" type="password" required autoComplete="new-password" className="campo"
             value={clave2} onChange={(e) => setClave2(e.target.value)} placeholder="••••••••" />
         </div>
         {error && <p className="text-sm text-vino">{error}</p>}

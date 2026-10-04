@@ -1,41 +1,64 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import Logo from "@/components/Logo";
+import JsonLd from "@/components/publico/JsonLd";
+import { GUIAS } from "@/contenido/guias";
+import { urlSitio } from "@/lib/legal";
 import {
-  IconoCalendario, IconoGastos, IconoMensajes, IconoDiario, IconoInformes, IconoAsistente,
+  IconoCalendario, IconoGastos, IconoMensajes, IconoDiario, IconoInformes, IconoAsistente, IconoHijos,
 } from "@/components/Iconos";
+
+export const metadata: Metadata = {
+  title: { absolute: "CoPadres — App para padres separados: custodia, gastos y mensajes sin discutir" },
+  description:
+    "La app de coordinación para padres y madres separados: calendario de custodia compartida, gastos de los hijos con reparto automático, extraescolares, mensajes con filtro de tono e informes para abogados. 14 días gratis.",
+  alternates: { canonical: "/" },
+};
 
 const FUNCIONALIDADES = [
   {
     Icono: IconoCalendario,
+    slug: "calendario-custodia",
     titulo: "Calendario de custodia auditado",
     texto: "Cada cambio queda registrado: quién lo pidió, quién lo aceptó y cuándo. Con fecha y hora.",
   },
   {
     Icono: IconoGastos,
+    slug: "gastos-compartidos",
     titulo: "Gastos con comprobante",
     texto: "Sube el ticket, el reparto se calcula según vuestro convenio y el estado de pago queda claro.",
   },
   {
     Icono: IconoMensajes,
+    slug: "mensajes-sin-conflicto",
     titulo: "Mensajes con filtro de tono",
     texto: "La IA detecta el tono agresivo antes de enviar y te propone una versión serena. Tú decides.",
   },
   {
     Icono: IconoDiario,
+    slug: "diario-del-menor",
     titulo: "Diario compartido del menor",
     texto: "Salud, medicación, colegio y actividades. Los dos siempre con la misma información.",
   },
   {
     Icono: IconoInformes,
+    slug: "informes-para-abogados",
     titulo: "Informes para tu abogado",
     texto: "Exporta en PDF el registro íntegro e inalterable del periodo que necesites. Listo para el juzgado.",
   },
   {
     Icono: IconoAsistente,
+    slug: "asistente-ia",
     titulo: "Asistente inteligente",
     texto: "Resume la situación, te ayuda a redactar propuestas serenas y responde tus dudas al momento.",
   },
 ];
+
+FUNCIONALIDADES.splice(2, 0, {
+  Icono: IconoHijos,
+  slug: "actividades-extraescolares",
+  titulo: "Actividades de los hijos",
+  texto: "Judo los martes, inglés los sábados… Horarios que se repiten solos, quién lleva a cada uno y sus cuotas.",
+});
 
 const PREGUNTAS = [
   {
@@ -59,18 +82,30 @@ const PREGUNTAS = [
 /** Landing page pública de venta. */
 export default function PaginaInicio() {
   return (
-    <main className="bg-crema-100 text-carbon">
-      {/* ---------- Cabecera ---------- */}
-      <header className="max-w-5xl mx-auto px-4 py-5 flex items-center justify-between">
-        <Logo />
-        <nav className="flex items-center gap-4">
-          <Link href="/precios" className="text-sm text-carbon-suave hover:text-carbon hidden sm:block">
-            Precios
-          </Link>
-          <Link href="/login" className="text-sm text-carbon-suave hover:text-carbon">Entrar</Link>
-          <Link href="/registro" className="boton-primario text-xs">Prueba gratis</Link>
-        </nav>
-      </header>
+    <div className="bg-crema-100 text-carbon">
+      <JsonLd datos={{
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            name: "CoPadres",
+            applicationCategory: "LifestyleApplication",
+            operatingSystem: "Web, iOS, Android",
+            url: urlSitio(),
+            inLanguage: "es-ES",
+            description: "App de coordinación para padres y madres separados: custodia, gastos, actividades, mensajes y diario del menor.",
+            offers: [
+              { "@type": "Offer", name: "Plan Individual", price: "8.99", priceCurrency: "EUR" },
+              { "@type": "Offer", name: "Plan Familia", price: "14.99", priceCurrency: "EUR" },
+            ],
+            publisher: { "@id": `${urlSitio()}/#organizacion` },
+          },
+          {
+            "@type": "FAQPage",
+            mainEntity: PREGUNTAS.map((q) => ({ "@type": "Question", name: q.p, acceptedAnswer: { "@type": "Answer", text: q.r } })),
+          },
+        ],
+      }} />
 
       {/* ---------- Héroe ---------- */}
       <section className="max-w-5xl mx-auto px-4 pt-14 pb-20 text-center">
@@ -123,14 +158,14 @@ export default function PaginaInicio() {
           Diseñada para reducir el conflicto: sobria, clara y con registro de todo.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FUNCIONALIDADES.map(({ Icono, titulo, texto }) => (
-            <div key={titulo} className="tarjeta">
+          {FUNCIONALIDADES.map(({ Icono, titulo, texto, slug }) => (
+            <Link key={titulo} href={`/funcionalidades/${slug}`} className="tarjeta hover:shadow-flotante transition-shadow">
               <span className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-salvia-100 text-salvia-700 mb-3">
                 <Icono />
               </span>
               <h3 className="font-semibold text-sm">{titulo}</h3>
               <p className="text-sm text-carbon-suave mt-1.5 leading-relaxed">{texto}</p>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -149,7 +184,24 @@ export default function PaginaInicio() {
               En EE. UU. los jueces ya recomiendan este tipo de apps; CoPadres es la respuesta en español.
             </p>
           </div>
-          <Link href="/registro" className="boton-primario mt-5 md:mt-0 shrink-0">Probar CoPadres</Link>
+          <Link href="/para-abogados" className="boton-primario mt-5 md:mt-0 shrink-0">Información para profesionales</Link>
+        </div>
+      </section>
+
+      {/* ---------- Guías ---------- */}
+      <section className="max-w-5xl mx-auto px-4 pb-20">
+        <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+          <h2 className="font-display text-3xl">Guías para padres separados</h2>
+          <Link href="/guias" className="text-sm text-salvia-700 font-semibold hover:underline">Ver todas las guías →</Link>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {GUIAS.slice(0, 3).map((g) => (
+            <Link key={g.slug} href={`/guias/${g.slug}`} className="tarjeta hover:shadow-flotante transition-shadow">
+              <p className="text-xs text-carbon-suave">{g.categoria} · {g.minutos} min</p>
+              <h3 className="font-semibold text-sm mt-1.5">{g.titulo}</h3>
+              <p className="text-sm text-carbon-suave mt-1.5 leading-relaxed">{g.resumen}</p>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -180,19 +232,6 @@ export default function PaginaInicio() {
         <p className="text-xs text-salvia-200 mt-4">14 días de prueba · 8,99 €/mes después · Sin permanencia</p>
       </section>
 
-      {/* ---------- Pie ---------- */}
-      <footer className="bg-carbon text-crema-200 py-10">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4 text-xs">
-          <Logo claro />
-          <nav className="flex gap-5">
-            <Link href="/legal/privacidad" className="hover:text-white">Privacidad</Link>
-            <Link href="/legal/terminos" className="hover:text-white">Términos</Link>
-            <Link href="/legal/cookies" className="hover:text-white">Cookies</Link>
-            <Link href="/precios" className="hover:text-white">Precios</Link>
-          </nav>
-          <p>© {new Date().getFullYear()} CoPadres</p>
-        </div>
-      </footer>
-    </main>
+    </div>
   );
 }

@@ -2,7 +2,11 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
+import Link from "next/link";
 import { crearClienteNavegador } from "@/lib/supabase/client";
+import { VERSION_LEGAL } from "@/lib/legal";
+
+const TIPOS_CONSENTIMIENTO = ["terminos", "privacidad", "datos_salud_menores"] as const;
 
 /**
  * Onboarding en 3 pasos (menos de 2 minutos):
@@ -28,6 +32,25 @@ export default function PaginaOnboarding() {
   const [emailInvitado, setEmailInvitado] = useState("");
   const [enlaceInvitacion, setEnlaceInvitacion] = useState<string | null>(null);
 
+  // Consentimientos (solo si faltan, p. ej. registro con Google)
+  const [faltanConsentimientos, setFaltanConsentimientos] = useState(false);
+  const [marcas, setMarcas] = useState({ terminos: false, privacidad: false, salud: false });
+
+  const guardarConsentimientos = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!marcas.terminos || !marcas.privacidad || !marcas.salud) return;
+    setCargando(true);
+    const supabase = crearClienteNavegador();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { error: e1 } = await supabase.from("consentimientos").insert(
+      TIPOS_CONSENTIMIENTO.map((tipo) => ({ usuario_id: user.id, tipo, version: VERSION_LEGAL, origen: "onboarding" }))
+    );
+    setCargando(false);
+    if (e1) return setError("No se pudo guardar tu aceptación. Inténtalo de nuevo.");
+    setFaltanConsentimientos(false);
+  };
+
   // Si ya pertenece a una familia, directo a la app.
   useEffect(() => {
     (async () => {
@@ -36,7 +59,16 @@ export default function PaginaOnboarding() {
       if (!user) return;
       const { data } = await supabase
         .from("miembros_familia").select("id").eq("usuario_id", user.id).maybeSingle();
-      if (data) router.replace("/app");
+      if (data) return router.replace("/app");
+
+      // Quien entra con Google no ha pasado por el formulario de registro:
+      // se le piden aquí las mismas aceptaciones legales.
+      const { data: firmados, error: errorC } = await supabase
+        .from("consentimientos").select("tipo").eq("usuario_id", user.id);
+      if (!errorC) {
+        const tipos = new Set((firmados ?? []).map((c) => c.tipo));
+        if (TIPOS_CONSENTIMIENTO.some((t) => !tipos.has(t))) setFaltanConsentimientos(true);
+      }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -109,7 +141,39 @@ export default function PaginaOnboarding() {
           ))}
         </div>
 
-        {paso === 1 && (
+        {faltanConsentimientos && (
+          <form onSubmit={guardarConsentimientos} className="tarjeta p-7 space-y-5">
+            <div>
+              <h1 className="font-display text-2xl mb-1">Antes de empezar</h1>
+              <p className="text-sm text-carbon-suave">Necesitamos tu aceptación para guardar vuestros datos con garantías.</p>
+            </div>
+            <div className="space-y-3 text-sm text-carbon-claro">
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" required className="mt-1 w-4 h-4 accent-salvia-700" checked={marcas.terminos}
+                  onChange={(e) => setMarcas({ ...marcas, terminos: e.target.checked })} />
+                <span>Acepto los <Link href="/legal/terminos" target="_blank" className="underline">Términos y condiciones</Link> y
+                  el <Link href="/legal/aviso-legal" target="_blank" className="underline">Aviso legal</Link>, y declaro ser mayor de edad.</span>
+              </label>
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" required className="mt-1 w-4 h-4 accent-salvia-700" checked={marcas.privacidad}
+                  onChange={(e) => setMarcas({ ...marcas, privacidad: e.target.checked })} />
+                <span>He leído la <Link href="/legal/privacidad" target="_blank" className="underline">Política de privacidad</Link>.</span>
+              </label>
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" required className="mt-1 w-4 h-4 accent-salvia-700" checked={marcas.salud}
+                  onChange={(e) => setMarcas({ ...marcas, salud: e.target.checked })} />
+                <span>Consiento expresamente el tratamiento de los datos de mis hijos que introduzca (incluidos datos de salud)
+                  y declaro ejercer su patria potestad o tutela.</span>
+              </label>
+            </div>
+            {error && <p className="text-sm text-vino">{error}</p>}
+            <button className="boton-primario w-full" disabled={cargando || !marcas.terminos || !marcas.privacidad || !marcas.salud}>
+              {cargando ? "Guardando…" : "Aceptar y continuar"}
+            </button>
+          </form>
+        )}
+
+        {!faltanConsentimientos && paso === 1 && (
           <form onSubmit={crearFamilia} className="tarjeta p-7 space-y-5">
             <div>
               <h1 className="font-display text-2xl mb-1">Crea vuestro espacio</h1>
@@ -146,7 +210,7 @@ export default function PaginaOnboarding() {
           </form>
         )}
 
-        {paso === 2 && (
+        {!faltanConsentimientos && paso === 2 && (
           <form onSubmit={guardarHijos} className="tarjeta p-7 space-y-5">
             <div>
               <h1 className="font-display text-2xl mb-1">¿Quiénes son los peques?</h1>
@@ -187,7 +251,7 @@ export default function PaginaOnboarding() {
           </form>
         )}
 
-        {paso === 3 && (
+        {!faltanConsentimientos && paso === 3 && (
           <div className="tarjeta p-7 space-y-5">
             <div>
               <h1 className="font-display text-2xl mb-1">Invita al otro progenitor</h1>

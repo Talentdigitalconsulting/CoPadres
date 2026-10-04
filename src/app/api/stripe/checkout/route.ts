@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { z } from "zod";
 import { crearClienteServidor } from "@/lib/supabase/server";
+import { dentroDelLimite, respuestaLimite } from "@/lib/limites";
+import { origenPermitido } from "@/lib/seguridad";
 
 /**
  * Crea una sesión de Stripe Checkout para el plan elegido.
@@ -12,11 +14,13 @@ import { crearClienteServidor } from "@/lib/supabase/server";
 const Entrada = z.object({ plan: z.enum(["individual", "familia"]) });
 
 export async function POST(peticion: Request) {
+  if (!origenPermitido(peticion)) return NextResponse.json({ error: "Origen no permitido" }, { status: 403 });
   const supabase = crearClienteServidor();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  if (!(await dentroDelLimite(supabase, "checkout", 10, 3600))) return respuestaLimite();
 
-  const cuerpo = Entrada.safeParse(await peticion.json());
+  const cuerpo = Entrada.safeParse(await peticion.json().catch(() => null));
   if (!cuerpo.success) return NextResponse.json({ error: "Plan no válido" }, { status: 400 });
 
   const precio =

@@ -1,71 +1,155 @@
-export const metadata = { title: "Política de privacidad" };
+import type { Metadata } from "next";
+import { DOMICILIO_COMPLETO, FECHA_LEGAL, TITULAR, VERSION_LEGAL } from "@/lib/legal";
 
-/**
- * ⚠️ PLANTILLA: revisa este texto con un profesional y completa los datos
- * del responsable (nombre/razón social, NIF y domicilio) antes de lanzar.
- */
+export const metadata: Metadata = {
+  title: "Política de privacidad",
+  description:
+    "Cómo trata CoPadres tus datos y los de tus hijos conforme al RGPD y la LOPDGDD: finalidades, bases legales, encargados, plazos y derechos.",
+  alternates: { canonical: "/legal/privacidad" },
+};
+
 export default function PaginaPrivacidad() {
   return (
     <>
       <h1>Política de privacidad</h1>
-      <p><em>Última actualización: julio de 2026</em></p>
+      <p><em>Versión {VERSION_LEGAL} · Última actualización: {FECHA_LEGAL}</em></p>
+      <p>
+        En CoPadres tratamos información muy sensible: la de tu familia y la de tus hijos. Por eso aplicamos el Reglamento
+        (UE) 2016/679 (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD) con el máximo cuidado y te lo explicamos con claridad.
+      </p>
 
       <h2>1. Responsable del tratamiento</h2>
-      <p>
-        [NOMBRE O RAZÓN SOCIAL DEL TITULAR], con NIF [NIF] y domicilio en [DIRECCIÓN]
-        (en adelante, «CoPadres»). Contacto de privacidad: [EMAIL DE CONTACTO].
-      </p>
+      <table>
+        <tbody>
+          <tr><th>Responsable</th><td>{TITULAR.nombre} (nombre comercial: {TITULAR.nombreComercial})</td></tr>
+          <tr><th>NIF</th><td>{TITULAR.nif}</td></tr>
+          <tr><th>Domicilio</th><td>{DOMICILIO_COMPLETO}</td></tr>
+          <tr><th>Contacto de privacidad</th><td><a href={`mailto:${TITULAR.email}`}>{TITULAR.email}</a></td></tr>
+        </tbody>
+      </table>
 
       <h2>2. Qué datos tratamos</h2>
       <ul>
-        <li><strong>Datos de cuenta:</strong> nombre, email y, si usas Google, tu avatar.</li>
-        <li><strong>Datos de coordinación familiar:</strong> calendario de custodia, gastos y comprobantes,
-          mensajes entre progenitores, diario del menor y registro de auditoría.</li>
-        <li><strong>Datos de menores:</strong> nombre y fecha de nacimiento de los hijos, introducidos por sus
-          progenitores en ejercicio de la patria potestad, junto con las anotaciones de salud, medicación y
-          escolares que los propios progenitores registren.</li>
-        <li><strong>Datos de facturación:</strong> los gestiona Stripe; CoPadres no almacena tarjetas.</li>
+        <li><strong>Datos de cuenta:</strong> nombre, email, contraseña (guardada cifrada con hash; nunca la vemos), foto de
+          perfil si entras con Google, preferencias y factores de verificación en dos pasos.</li>
+        <li><strong>Datos del espacio familiar:</strong> nombre del espacio, reparto de gastos del convenio, miembros e invitaciones.</li>
+        <li><strong>Datos de los hijos:</strong> nombre, fecha de nacimiento, notas de su ficha, actividades y horarios, y las
+          anotaciones del diario, que pueden incluir <strong>datos de salud</strong> (medicación, citas médicas, síntomas).</li>
+        <li><strong>Contenido de coordinación:</strong> eventos de custodia, solicitudes de cambio, gastos y comprobantes,
+          cuotas recurrentes, mensajes entre progenitores y registro de auditoría.</li>
+        <li><strong>Datos de suscripción:</strong> plan, estado y referencias de cliente de Stripe (no guardamos datos de tarjeta).</li>
+        <li><strong>Datos técnicos de seguridad:</strong> registros de acceso, dirección IP y contadores de uso para prevenir abusos.</li>
+        <li><strong>Prueba de consentimientos:</strong> qué aceptaste, en qué versión y cuándo.</li>
       </ul>
 
-      <h2>3. Finalidad y base jurídica</h2>
-      <ul>
-        <li>Prestar el servicio de coordinación (ejecución del contrato, art. 6.1.b RGPD).</li>
-        <li>Mantener el registro documental íntegro entre ambos progenitores, incluido su posible uso
-          como prueba (interés legítimo de ambos progenitores, art. 6.1.f RGPD).</li>
-        <li>Funciones de IA (filtro de tono y asistente): el texto se envía a la API de Anthropic para
-          generar la respuesta; no se usa para entrenar modelos.</li>
-        <li>Gestión del cobro de suscripciones (ejecución del contrato).</li>
-      </ul>
-
-      <h2>4. Conservación</h2>
+      <h2>3. Para qué los usamos y con qué base legal</h2>
+      <table>
+        <thead><tr><th>Finalidad</th><th>Base jurídica</th></tr></thead>
+        <tbody>
+          <tr><td>Crear tu cuenta y prestar el servicio (calendario, gastos, mensajes, diario, informes).</td>
+            <td>Ejecución del contrato (art. 6.1.b RGPD).</td></tr>
+          <tr><td>Tratar datos de salud de los menores introducidos en el diario o la ficha.</td>
+            <td>Consentimiento explícito del progenitor (art. 9.2.a RGPD), que puedes retirar en cualquier momento.</td></tr>
+          <tr><td>Filtro de tono y asistente con IA (procesar el texto que escribes o preguntas).</td>
+            <td>Ejecución del contrato; el filtro de tono puede desactivarse en Ajustes.</td></tr>
+          <tr><td>Cobrar la suscripción y emitir facturas.</td>
+            <td>Ejecución del contrato y obligación legal (art. 6.1.b y 6.1.c RGPD).</td></tr>
+          <tr><td>Seguridad: prevenir accesos indebidos, fraudes y abusos; registro de auditoría inalterable.</td>
+            <td>Interés legítimo (art. 6.1.f RGPD) en proteger el servicio y la integridad del registro compartido.</td></tr>
+          <tr><td>Avisos del servicio (notificaciones de la app y emails transaccionales).</td>
+            <td>Ejecución del contrato. No enviamos publicidad.</td></tr>
+        </tbody>
+      </table>
       <p>
-        Los datos se conservan mientras la cuenta esté activa. Los mensajes y el registro de auditoría son
-        inmutables por diseño: ninguna de las partes puede alterarlos ni borrarlos, para preservar su valor
-        probatorio. Si eliminas tu cuenta, tu perfil y acceso se suprimen; el registro compartido se conserva
-        para el otro progenitor por interés legítimo, quedando tus entradas atribuidas a un usuario dado de baja.
+        No elaboramos perfiles comerciales, no vendemos datos y no tomamos decisiones automatizadas con efectos jurídicos sobre
+        ti. Las sugerencias de la IA son solo propuestas que tú decides si usar.
       </p>
 
-      <h2>5. Destinatarios y encargados</h2>
-      <ul>
-        <li><strong>Supabase</strong> (alojamiento de base de datos y archivos, en la UE si así se configura).</li>
-        <li><strong>Vercel</strong> (infraestructura de la aplicación web).</li>
-        <li><strong>Anthropic</strong> (procesamiento de las funciones de IA).</li>
-        <li><strong>Stripe</strong> (pagos y facturación).</li>
-      </ul>
-      <p>No vendemos datos ni los cedemos a terceros con fines publicitarios.</p>
-
-      <h2>6. Tus derechos</h2>
+      <h2>4. Datos de menores</h2>
       <p>
-        Puedes ejercer los derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad
-        desde <strong>Ajustes → Privacidad y datos</strong> (descarga en JSON y eliminación de cuenta) o
-        escribiendo a [EMAIL DE CONTACTO]. También puedes reclamar ante la Agencia Española de Protección
-        de Datos (aepd.es).
+        CoPadres no está dirigida a menores y no permite que se registren. Los datos de los hijos los introducen los progenitores
+        que ejercen su patria potestad o tutela, que declaran tener legitimación para ello y prestan el consentimiento explícito
+        para los datos de salud. Solo son visibles para los dos progenitores del espacio familiar.
       </p>
 
-      <h2>7. Seguridad</h2>
+      <h2>5. Quién puede ver tus datos</h2>
+      <ul>
+        <li><strong>Los miembros de tu espacio familiar</strong> (el otro progenitor). Nadie más: cada dato está aislado por
+          familia mediante seguridad a nivel de fila en la base de datos.</li>
+        <li><strong>Las personas a las que tú entregues un informe</strong> (tu abogado o mediador), cuando decidas compartirlo.</li>
+        <li><strong>Encargados del tratamiento</strong>, que solo tratan los datos siguiendo nuestras instrucciones y con contrato
+          conforme al artículo 28 RGPD:
+          <ul>
+            <li>Supabase, Inc. — base de datos, autenticación y almacenamiento de comprobantes.</li>
+            <li>Vercel, Inc. — alojamiento y ejecución de la aplicación web.</li>
+            <li>Stripe Payments Europe, Ltd. (Irlanda) — gestión de pagos y suscripciones.</li>
+            <li>Anthropic, PBC — modelos de IA para el filtro de tono y el asistente. Los textos se envían solo para generar la
+              respuesta y, según sus condiciones comerciales, no se usan para entrenar sus modelos.</li>
+            <li>Google Ireland Ltd. — solo si eliges entrar con tu cuenta de Google.</li>
+          </ul>
+        </li>
+        <li><strong>Autoridades</strong>, únicamente cuando exista una obligación legal o un requerimiento judicial.</li>
+      </ul>
+
+      <h2>6. Transferencias internacionales</h2>
       <p>
-        Toda la información viaja cifrada (TLS) y se almacena con aislamiento estricto por familia
-        (Row Level Security): cada dato solo es visible para los miembros del espacio familiar al que pertenece.
+        Algunos encargados son empresas de Estados Unidos. Cuando sus servicios impliquen una transferencia internacional, esta se
+        ampara en el Marco de Privacidad de Datos UE-EE. UU. (decisión de adecuación de la Comisión Europea de 10 de julio de 2023)
+        para las empresas adheridas y, en su defecto, en las cláusulas contractuales tipo aprobadas por la Comisión, con medidas
+        adicionales como el cifrado. Puedes pedirnos más información en el email de contacto.
+      </p>
+
+      <h2>7. Cuánto tiempo los conservamos</h2>
+      <ul>
+        <li>Mientras tu cuenta esté activa.</li>
+        <li>
+          Si eliminas tu cuenta, borramos o anonimizamos tus datos identificativos (nombre, email, foto) y tus credenciales. Los
+          contenidos que ya compartiste con el otro progenitor (mensajes, gastos, solicitudes, registro) se conservan para él con
+          el autor anonimizado, porque forman parte de un registro común que puede necesitar para formular o defender
+          reclamaciones (art. 17.3.e RGPD).
+        </li>
+        <li>Los datos de facturación, durante los plazos que exige la normativa fiscal y mercantil.</li>
+        <li>Los registros técnicos de seguridad, como máximo 12 meses, salvo que sean necesarios para investigar un incidente.</li>
+      </ul>
+
+      <h2>8. Tus derechos</h2>
+      <p>
+        Puedes ejercer en cualquier momento tus derechos de <strong>acceso, rectificación, supresión, oposición, limitación del
+        tratamiento y portabilidad</strong>, y <strong>retirar tu consentimiento</strong> sin que ello afecte a la licitud del
+        tratamiento anterior:
+      </p>
+      <ul>
+        <li>Desde la app: Ajustes → Privacidad y datos (descargar tus datos en JSON o eliminar tu cuenta).</li>
+        <li>Por email a <a href={`mailto:${TITULAR.email}`}>{TITULAR.email}</a>, indicando el derecho que ejerces. Si hay dudas
+          sobre tu identidad, podremos pedirte que la acredites.</li>
+      </ul>
+      <p>
+        Responderemos en el plazo de un mes. Si consideras que no hemos atendido bien tu solicitud, puedes reclamar ante la
+        Agencia Española de Protección de Datos (<a href="https://www.aepd.es" rel="noopener noreferrer" target="_blank">www.aepd.es</a>,
+        C/ Jorge Juan 6, 28001 Madrid).
+      </p>
+
+      <h2>9. Cómo protegemos tus datos</h2>
+      <ul>
+        <li>Conexión cifrada (HTTPS/TLS) en todas las comunicaciones y cifrado en reposo en la base de datos.</li>
+        <li>Aislamiento por familia con seguridad a nivel de fila: nadie ajeno a tu espacio puede leer ni escribir tus datos.</li>
+        <li>Verificación en dos pasos opcional, exigida también por la propia base de datos.</li>
+        <li>Contraseñas robustas y comprobación de contraseñas filtradas sin que la contraseña salga de tu dispositivo.</li>
+        <li>Mensajes y registro de auditoría inalterables, límites contra ataques de fuerza bruta y cierre de sesión por inactividad.</li>
+        <li>Comprobantes en almacenamiento privado, accesibles solo con enlaces temporales.</li>
+      </ul>
+      <p>
+        Si se produjera una brecha de seguridad que afecte a tus datos, la notificaremos a la AEPD en un máximo de 72 horas y te
+        avisaremos cuando exista un riesgo alto para tus derechos. Más detalles en la página de <a href="/seguridad">seguridad</a>.
+      </p>
+
+      <h2>10. Cookies</h2>
+      <p>Solo usamos cookies técnicas necesarias. Consulta la <a href="/legal/cookies">Política de cookies</a>.</p>
+
+      <h2>11. Cambios en esta política</h2>
+      <p>
+        Si la modificamos de forma relevante te avisaremos por email o en la app antes de que entre en vigor. Cada versión queda
+        identificada por su fecha.
       </p>
     </>
   );
